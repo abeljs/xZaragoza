@@ -1,5 +1,8 @@
 package abeljs.xzaragoza;
 
+import android.os.Bundle;
+import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -8,12 +11,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.room.Room;
 
-import android.os.Bundle;
-import android.widget.Toast;
-
-import java.util.ArrayList;
 import java.util.List;
-
 
 import abeljs.xzaragoza.apis.BusquedaLineasDeBusesAPI;
 import abeljs.xzaragoza.apis.BusquedaLineasDeBusesCallback;
@@ -22,8 +20,6 @@ import abeljs.xzaragoza.data.DaoLineaDeBus;
 import abeljs.xzaragoza.data.LineaDeBus;
 import abeljs.xzaragoza.fragments.FragmentDireccionesLineas;
 import abeljs.xzaragoza.fragments.FragmentLineasDeBuses;
-import abeljs.xzaragoza.fragments.LineaSelectedInterface;
-import abeljs.xzaragoza.fragments.LineasDeBusesDireccionesAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
