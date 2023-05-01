@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import abeljs.xzaragoza.R;
+import abeljs.xzaragoza.adaptadores.LineasDeBusesDireccionesAdapter;
 
 
 public class FragmentDireccionesLineas extends Fragment {
@@ -53,7 +54,7 @@ public class FragmentDireccionesLineas extends Fragment {
                              Bundle savedInstanceState) {
         View vista = inflater.inflate(R.layout.fragment_lineas_de_buses_list, container, false);
 
-        rvDirecciones = vista.findViewById(R.id.rvLista);
+        rvDirecciones = vista.findViewById(R.id.rvListaLineasBuses);
         rvDirecciones.setLayoutManager(new LinearLayoutManager(getContext()));
 
         List<String> listaDirecciones = new ArrayList<>();

@@ -1,4 +1,4 @@
-package abeljs.xzaragoza.fragments;
+package abeljs.xzaragoza.adaptadores;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,16 +10,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import abeljs.xzaragoza.R;
+import abeljs.xzaragoza.data.Buses;
+import abeljs.xzaragoza.fragments.LineaSelectedInterface;
 
 
-public class LineasDeBusesDireccionesAdapter extends RecyclerView.Adapter<LineasDeBusesDireccionesAdapter.ViewHolder> {
+public class LineasDeBusesAdapter extends RecyclerView.Adapter<LineasDeBusesAdapter.ViewHolder> {
 
-    private final String numLinea;
-    private final List<String> listaDirecciones;
+    private List<Buses> listaLineas;
+    private final LineaSelectedInterface lineaSelected;
 
-    public LineasDeBusesDireccionesAdapter(String numLinea, List<String> listaDirecciones) {
-        this.numLinea = numLinea;
-        this.listaDirecciones = listaDirecciones;
+    public LineasDeBusesAdapter(List<Buses> listaLineas, LineaSelectedInterface lineaSelected) {
+        this.listaLineas = listaLineas;
+        this.lineaSelected = lineaSelected;
     }
 
     @Override
@@ -30,20 +32,22 @@ public class LineasDeBusesDireccionesAdapter extends RecyclerView.Adapter<Lineas
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.txtNumLinea.setText(numLinea);
-        holder.txtRecorrido.setText(listaDirecciones.get(position));
+        Buses lineaDeBus = listaLineas.get(position);
+
+        holder.txtNumLinea.setText(lineaDeBus.numBus);
+        holder.txtRecorrido.setText(lineaDeBus.direccion1);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                lineaSelected.onLineaSelected(lineaDeBus);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return listaDirecciones.size();
+        return listaLineas.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

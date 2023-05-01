@@ -1,13 +1,10 @@
 package abeljs.xzaragoza.apis;
 
-import android.util.Log;
-
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Scanner;
 import java.util.concurrent.Executor;
 
@@ -21,7 +18,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import abeljs.xzaragoza.data.LineaDeBus;
+import abeljs.xzaragoza.data.Buses;
 
 import java.util.concurrent.Executors;
 
@@ -34,7 +31,7 @@ public class BusquedaLineasDeBusesAPI {
             @Override
             public void run() {
                 try {
-                    List<LineaDeBus> listaLineasDeBus = getLineasBusesSynchronous();
+                    List<Buses> listaLineasDeBus = getLineasBusesSynchronous();
                     callback.onBusquedaLineasDeBusesComplete(listaLineasDeBus);
                 } catch (SAXException e) {
                     callback.onBusquedaLineasDeBusesError("ERROR al obtener las lineas de buses.");
@@ -47,9 +44,9 @@ public class BusquedaLineasDeBusesAPI {
         });
     }
 
-    public List<LineaDeBus> getLineasBusesSynchronous()
+    public List<Buses> getLineasBusesSynchronous()
             throws SAXException, IOException, ParserConfigurationException {
-        List<LineaDeBus> listaLineasBus = new ArrayList<>();
+        List<Buses> listaLineasBus = new ArrayList<>();
 
         URL url = new URL("https://www.zaragoza.es/sede/servicio/urbanismo-infraestructuras/transporte-urbano/linea-autobus.xml");
 
@@ -114,8 +111,8 @@ public class BusquedaLineasDeBusesAPI {
                         direccion2 = direccion1 + " -";
                     }
 
-                    LineaDeBus lineaBus = new LineaDeBus(numLineaBus, direccion1, direccion2);
-                    Log.d("Prueba", numLineaBus);
+                    Buses lineaBus = new Buses(numLineaBus, direccion1, direccion2);
+//                    Log.d("Prueba", numLineaBus);
                     listaLineasBus.add(lineaBus);
                 }
             }

@@ -7,14 +7,12 @@ import androidx.room.Query;
 
 import java.util.List;
 
-import abeljs.xzaragoza.data.LineaDeBus;
-
 @Dao
-public interface DaoLineaDeBus {
+public interface DaoBuses {
 
-    @Query("SELECT * FROM lineaBus ORDER BY numLinea")
-    List<LineaDeBus> getAllLineasDeBus();
+    @Query("SELECT * FROM buses ORDER BY num_bus")
+    List<Buses> getAllLineasDeBus();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertarLineasDeBus(LineaDeBus lineaDeBus);
+    void insertarLineasDeBus(Buses lineaDeBus);
 }

@@ -1,18 +1,17 @@
 package abeljs.xzaragoza.data;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "lineaBus")
-public class LineaDeBus {
+@Entity(tableName = "buses")
+public class Buses {
 
     @PrimaryKey(autoGenerate = false)
-    @ColumnInfo(name = "numLinea")
+    @ColumnInfo(name = "num_bus")
     @NonNull
-    public String numLinea;
+    public String numBus;
 
     @ColumnInfo(name = "direccion1")
     public String direccion1;
@@ -21,8 +20,8 @@ public class LineaDeBus {
     public String direccion2;
 
 
-    public LineaDeBus(String numLinea, String direccion1, String direccion2) {
-        this.numLinea = numLinea;
+    public Buses(String numBus, String direccion1, String direccion2) {
+        this.numBus = numBus;
         this.direccion1 = direccion1;
         this.direccion2 = direccion2;
     }

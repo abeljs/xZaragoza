@@ -1,7 +1,7 @@
 package abeljs.xzaragoza.fragments;
 
-import abeljs.xzaragoza.data.LineaDeBus;
+import abeljs.xzaragoza.data.Buses;
 
 public interface LineaSelectedInterface {
-    public void onLineaSelected(LineaDeBus selectedlineaDeBus);
+    public void onLineaSelected(Buses selectedlineaDeBus);
 }

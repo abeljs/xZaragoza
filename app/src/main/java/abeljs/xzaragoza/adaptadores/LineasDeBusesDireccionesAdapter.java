@@ -1,4 +1,4 @@
-package abeljs.xzaragoza.fragments;
+package abeljs.xzaragoza.adaptadores;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,17 +10,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import abeljs.xzaragoza.R;
-import abeljs.xzaragoza.data.LineaDeBus;
 
 
-public class LineasDeBusesAdapter extends RecyclerView.Adapter<LineasDeBusesAdapter.ViewHolder> {
+public class LineasDeBusesDireccionesAdapter extends RecyclerView.Adapter<LineasDeBusesDireccionesAdapter.ViewHolder> {
 
-    private List<LineaDeBus> listaLineas;
-    private final LineaSelectedInterface lineaSelected;
+    private final String numLinea;
+    private final List<String> listaDirecciones;
 
-    public LineasDeBusesAdapter(List<LineaDeBus> listaLineas, LineaSelectedInterface lineaSelected) {
-        this.listaLineas = listaLineas;
-        this.lineaSelected = lineaSelected;
+    public LineasDeBusesDireccionesAdapter(String numLinea, List<String> listaDirecciones) {
+        this.numLinea = numLinea;
+        this.listaDirecciones = listaDirecciones;
     }
 
     @Override
@@ -31,22 +30,20 @@ public class LineasDeBusesAdapter extends RecyclerView.Adapter<LineasDeBusesAdap
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        LineaDeBus lineaDeBus = listaLineas.get(position);
-
-        holder.txtNumLinea.setText(lineaDeBus.numLinea);
-        holder.txtRecorrido.setText(lineaDeBus.direccion1);
+        holder.txtNumLinea.setText(numLinea);
+        holder.txtRecorrido.setText(listaDirecciones.get(position));
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                lineaSelected.onLineaSelected(lineaDeBus);
+
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return listaLineas.size();
+        return listaDirecciones.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

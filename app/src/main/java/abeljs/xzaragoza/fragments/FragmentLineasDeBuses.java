@@ -10,20 +10,19 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import abeljs.xzaragoza.MainActivity;
 import abeljs.xzaragoza.R;
+import abeljs.xzaragoza.adaptadores.LineasDeBusesAdapter;
 import abeljs.xzaragoza.data.BaseDeDatos;
-import abeljs.xzaragoza.data.DaoLineaDeBus;
-import abeljs.xzaragoza.data.LineaDeBus;
+import abeljs.xzaragoza.data.Buses;
+import abeljs.xzaragoza.data.DaoBuses;
 
 
 public class FragmentLineasDeBuses extends Fragment implements LineaSelectedInterface {
 
     RecyclerView rvLineasDeBus;
-    List<LineaDeBus> listaLineasDeBuses;
+    List<Buses> listaLineasDeBuses;
 
     public FragmentLineasDeBuses() {
     }
@@ -34,12 +33,12 @@ public class FragmentLineasDeBuses extends Fragment implements LineaSelectedInte
 
         View vista = inflater.inflate(R.layout.fragment_lineas_de_buses_list, container, false);
 
-        rvLineasDeBus = vista.findViewById(R.id.rvLista);
+        rvLineasDeBus = vista.findViewById(R.id.rvListaLineasBuses);
         rvLineasDeBus.setLayoutManager(new LinearLayoutManager(getContext()));
 
         BaseDeDatos db = Room.databaseBuilder(getActivity().getApplicationContext(),
                 BaseDeDatos.class, "Buses").allowMainThreadQueries().build();
-        DaoLineaDeBus daoLineaDeBus = db.daoLineaDeBus();
+        DaoBuses daoLineaDeBus = db.daoLineaDeBus();
 
         listaLineasDeBuses = daoLineaDeBus.getAllLineasDeBus();
 
@@ -50,9 +49,15 @@ public class FragmentLineasDeBuses extends Fragment implements LineaSelectedInte
     }
 
     @Override
-    public void onLineaSelected(LineaDeBus selectedlineaDeBus) {
-
-        MainActivity activity = (MainActivity) getActivity();
-        activity.remplazarPorFragmentDirecciones(selectedlineaDeBus.numLinea, selectedlineaDeBus.direccion1, selectedlineaDeBus.direccion2);
+    public void onLineaSelected(Buses selectedlineaDeBus) {
+        Fragment fragment = FragmentDireccionesLineas.newInstance
+                        (selectedlineaDeBus.numBus,
+                        selectedlineaDeBus.direccion1,
+                        selectedlineaDeBus.direccion2);
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.flContenedorFragments, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 }
