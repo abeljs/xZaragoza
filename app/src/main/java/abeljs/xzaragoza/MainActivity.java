@@ -63,26 +63,22 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String numPoste = String.valueOf(s);
+                if(edtNPoste.getText().toString().isEmpty()){
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.flContenedorFragments, new FragmentLineasDeBuses())
+                            .commit();
+                } else {
+                    String numPoste = String.valueOf(s);
 
-                BusquedaPosteAPI api = new BusquedaPosteAPI();
-                api.buscarPoste(new BusquedaPosteCallback() {
-                    @Override
-                    public void onBusquedaPosteComplete(ArrayList<TiempoBus> result) {
-                        ArrayList<TiempoBus> listaParadasLineaDeBus = result;
-                        FragmentParada fragmentParada = FragmentParada.newInstance(listaParadasLineaDeBus);
-                        getSupportFragmentManager()
-                                .beginTransaction()
-                                .replace(R.id.flContenedorFragments, fragmentParada)
-                                .commit();
-                    }
-
-                    @Override
-                    public void onBusquedaPosteError(String cadenaError) {
-                        Log.e("prueba", "error");
-                    }
-                }, numPoste);
+                    FragmentParada fragmentParada = FragmentParada.newInstance(numPoste);
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.flContenedorFragments, fragmentParada)
+                            .commit();
+                }
             }
+
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -119,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void insertarLineasBusesEnBD(List<Buses> listaLineasDeBus) {
         BaseDeDatos db = Room.databaseBuilder(this,
-                BaseDeDatos.class, "Buses").allowMainThreadQueries().build();
+                BaseDeDatos.class, BaseDeDatos.NOMBRE).allowMainThreadQueries().build();
         DaoBuses daoLineaDeBus = db.daoLineaDeBus();
 
         for (Buses lineaDeBus : listaLineasDeBus) {

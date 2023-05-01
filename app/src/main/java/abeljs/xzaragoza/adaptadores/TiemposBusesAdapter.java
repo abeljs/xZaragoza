@@ -15,10 +15,10 @@ import abeljs.xzaragoza.data.TiempoBus;
 
 public class TiemposBusesAdapter extends RecyclerView.Adapter<TiemposBusesAdapter.ViewHolder> {
 
-    private List<TiempoBus> listaLineas;
+    private List<TiempoBus> listaBusesEnParada;
 
     public TiemposBusesAdapter(List<TiempoBus> listaBuses) {
-        this.listaLineas = listaBuses;
+        this.listaBusesEnParada = listaBuses;
     }
 
     @Override
@@ -27,11 +27,12 @@ public class TiemposBusesAdapter extends RecyclerView.Adapter<TiemposBusesAdapte
         return new ViewHolder(vista);
     }
 
+
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        TiempoBus bus = listaLineas.get(position);
+        TiempoBus bus = listaBusesEnParada.get(position);
 
-        holder.txtNumLinea.setText(bus.numLinea);
+        holder.txtNumLinea.setText(bus.numBus);
 
         if (bus.minutos == 0) {
             holder.txtRecorrido.setText("En la parada");
@@ -49,7 +50,7 @@ public class TiemposBusesAdapter extends RecyclerView.Adapter<TiemposBusesAdapte
 
     @Override
     public int getItemCount() {
-        return listaLineas.size();
+        return listaBusesEnParada.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -62,4 +63,5 @@ public class TiemposBusesAdapter extends RecyclerView.Adapter<TiemposBusesAdapte
         }
 
     }
+
 }

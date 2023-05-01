@@ -9,7 +9,7 @@ public class TiempoBus implements Serializable {
     public String numParada;
 
 //    @ColumnInfo(name = "numLinea")
-    public String numLinea;
+    public String numBus;
 
 //    @ColumnInfo(name = "primero")
     public int minutos;
@@ -19,7 +19,7 @@ public class TiempoBus implements Serializable {
 
     public TiempoBus(String numParada, String numLinea, int minutos) {
         this.numParada = numParada;
-        this.numLinea = numLinea;
+        this.numBus = numLinea;
         this.minutos = minutos;
     }
 }

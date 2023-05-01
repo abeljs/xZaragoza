@@ -37,7 +37,7 @@ public class FragmentLineasDeBuses extends Fragment implements LineaSelectedInte
         rvLineasDeBus.setLayoutManager(new LinearLayoutManager(getContext()));
 
         BaseDeDatos db = Room.databaseBuilder(getActivity().getApplicationContext(),
-                BaseDeDatos.class, "Buses").allowMainThreadQueries().build();
+                BaseDeDatos.class, BaseDeDatos.NOMBRE).allowMainThreadQueries().build();
         DaoBuses daoLineaDeBus = db.daoLineaDeBus();
 
         listaLineasDeBuses = daoLineaDeBus.getAllLineasDeBus();
