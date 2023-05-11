@@ -16,10 +16,11 @@ public class Postes {
     @ColumnInfo(name = "nombre_poste")
     public String nombrePoste;
 
-//    public boolean esFavorito = false; crear tabla ParadaDeBusFavoritos dos campos, numParada y fechaAlta
+//    crear tabla ParadaDeBusFavoritos dos campos, numParada y fechaAlta
 
-    public Postes(@NonNull String numParada, String nombreParada) {
-        this.numPoste = numParada;
-        this.nombrePoste = nombreParada;
+
+    public Postes(String numPoste, String nombrePoste) {
+        this.numPoste = numPoste;
+        this.nombrePoste = nombrePoste;
     }
 }

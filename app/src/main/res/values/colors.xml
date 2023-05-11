@@ -7,4 +7,51 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!--  COLORES BUSES  -->
+    <color name="color_21">#FF2299A7</color>
+    <color name="color_22">#FFaf5723</color>
+    <color name="color_23">#FFD651B1</color>
+    <color name="color_24">#FF6572d0</color>
+    <color name="color_25">#FF25b22a</color>
+    <color name="color_28">#CC7414</color>
+    <color name="color_29">#FFff8e98</color>
+    <color name="color_30">#FFa79e08</color>
+    <color name="color_31">#428A8A</color>
+    <color name="color_32">#289715</color>
+    <color name="color_33">#7C0DC8</color>
+    <color name="color_34">#FFb478a7</color>
+    <color name="color_35">#FFd15330</color>
+    <color name="color_36">#FF71ae21</color>
+    <color name="color_38">#FF886f9b</color>
+    <color name="color_39">#FFca222d</color>
+    <color name="color_40">#2BAF71</color>
+    <color name="color_41">#FF325e84</color>
+    <color name="color_42">#FFb05532</color>
+    <color name="color_43">#FF7e1232</color>
+    <color name="color_44">#FF2e7d32</color>
+    <color name="color_50">#FF72267b</color>
+    <color name="color_51">#FF958032</color>
+    <color name="color_52">#FFb7556d</color>
+    <color name="color_53">#FF1f2872</color>
+    <color name="color_54">#FFdb7430</color>
+    <color name="color_55">#FF31a626</color>
+    <color name="color_56">#FF34618c</color>
+    <color name="color_57">#FF82152e</color>
+    <color name="color_58">#FFac419b</color>
+    <color name="color_59">#FF32500f</color>
+    <color name="color_60">#FF610817</color>
+    <color name="color_C1">#FFef4264</color>
+    <color name="color_C4">#FF21629f</color>
+    <color name="color_CI1">#FFa4aa35</color>
+    <color name="color_CI2">#FF5a53c8</color>
+    <color name="color_N1">#FF9634b7</color>
+    <color name="color_N2">#FF671406</color>
+    <color name="color_N3">#FF505065</color>
+    <color name="color_N4">#FF5a035d</color>
+    <color name="color_N5">#FF063006</color>
+    <color name="color_N6">#FF464908</color>
+    <color name="color_N7">#FF490840</color>
+    <color name="color_TUR">#61409f</color>
+
 </resources>

@@ -16,16 +16,21 @@ import androidx.room.Room;
 import java.util.ArrayList;
 import java.util.List;
 
-import abeljs.xzaragoza.apis.BusquedaLineasDeBusesAPI;
-import abeljs.xzaragoza.apis.BusquedaLineasDeBusesCallback;
-import abeljs.xzaragoza.apis.BusquedaPosteAPI;
-import abeljs.xzaragoza.apis.BusquedaPosteCallback;
+import abeljs.xzaragoza.apis.BusquedaBusPostesAPI;
+import abeljs.xzaragoza.apis.BusquedaBusPostesCallback;
+import abeljs.xzaragoza.apis.BusquedaBusesAPI;
+import abeljs.xzaragoza.apis.BusquedaBusesCallback;
+import abeljs.xzaragoza.apis.BusquedaPostesAPI;
+import abeljs.xzaragoza.apis.BusquedaPostesCallback;
 import abeljs.xzaragoza.data.BaseDeDatos;
+import abeljs.xzaragoza.data.BusPostes;
+import abeljs.xzaragoza.data.BusPostesDao;
 import abeljs.xzaragoza.data.Buses;
-import abeljs.xzaragoza.data.DaoBuses;
-import abeljs.xzaragoza.data.TiempoBus;
-import abeljs.xzaragoza.fragments.FragmentLineasDeBuses;
-import abeljs.xzaragoza.fragments.FragmentParada;
+import abeljs.xzaragoza.data.BusesDao;
+import abeljs.xzaragoza.data.Postes;
+import abeljs.xzaragoza.data.PostesDao;
+import abeljs.xzaragoza.fragments.FragmentBuses;
+import abeljs.xzaragoza.fragments.FragmentTiemposPoste;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.flContenedorFragments, new FragmentLineasDeBuses())
+                .replace(R.id.flContenedorFragments, new FragmentBuses())
                 .commit();
 
     }
@@ -66,12 +71,12 @@ public class MainActivity extends AppCompatActivity {
                 if(edtNPoste.getText().toString().isEmpty()){
                     getSupportFragmentManager()
                             .beginTransaction()
-                            .replace(R.id.flContenedorFragments, new FragmentLineasDeBuses())
+                            .replace(R.id.flContenedorFragments, new FragmentBuses())
                             .commit();
                 } else {
                     String numPoste = String.valueOf(s);
 
-                    FragmentParada fragmentParada = FragmentParada.newInstance(numPoste);
+                    FragmentTiemposPoste fragmentParada = FragmentTiemposPoste.newInstance(numPoste);
                     getSupportFragmentManager()
                             .beginTransaction()
                             .replace(R.id.flContenedorFragments, fragmentParada)
@@ -98,11 +103,34 @@ public class MainActivity extends AppCompatActivity {
 
         model.getMensajeError().observe(MainActivity.this, mensajeErrorObserver);
 
-        BusquedaLineasDeBusesAPI api = new BusquedaLineasDeBusesAPI();
-        api.getLineasBuses(new BusquedaLineasDeBusesCallback() {
+        BusquedaBusesAPI apiBusquedaBuses = new BusquedaBusesAPI();
+        apiBusquedaBuses.getBuses(new BusquedaBusesCallback() {
             @Override
             public void onBusquedaLineasDeBusesComplete(List<Buses> listaLineasDeBus) {
-                insertarLineasBusesEnBD(listaLineasDeBus);
+                insertarBusesEnBD(listaLineasDeBus);
+
+//                for (Buses bus : listaLineasDeBus) {
+//                    BusquedaBusPostesAPI apiBusPostes = new BusquedaBusPostesAPI();
+//                    apiBusPostes.getBusPostes(new BusquedaBusPostesCallback() {
+//                        @Override
+//                        public void onBusquedaBusPostesComplete(List<BusPostes> listaBusPostes) {
+//                            if (listaBusPostes != null) {
+//                                if (listaBusPostes.size() > 0) {
+//                                    Log.e("pruebaDef", listaBusPostes.get(0).destino + " "
+//                                            + listaBusPostes.get(0).numBus + " "
+//                                            + listaBusPostes.get(0).numPoste + " "
+//                                            + listaBusPostes.get(0).orden);
+//                                    insertarBusPostesEnBD(listaBusPostes);
+//                                }
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void onBusquedaBusPostesError(String cadenaError) {
+//
+//                        }
+//                    }, bus.numBus);
+//                }
             }
 
             @Override
@@ -110,18 +138,51 @@ public class MainActivity extends AppCompatActivity {
                 model.getMensajeError().postValue(cadenaError);
             }
         });
+
+        BusquedaPostesAPI apiBusquedaPostes = new BusquedaPostesAPI();
+        apiBusquedaPostes.getPostes(new BusquedaPostesCallback() {
+            @Override
+            public void onBusquedaPostesComplete(ArrayList<Postes> result) {
+                insertarPostesEnBD(result);
+            }
+
+            @Override
+            public void onBusquedaPostesError(String cadenaError) {
+                model.getMensajeError().postValue(cadenaError);
+            }
+
+        });
+
     }
 
 
-    public void insertarLineasBusesEnBD(List<Buses> listaLineasDeBus) {
+    public void insertarBusesEnBD(List<Buses> listaBuses) {
         BaseDeDatos db = Room.databaseBuilder(this,
                 BaseDeDatos.class, BaseDeDatos.NOMBRE).allowMainThreadQueries().build();
-        DaoBuses daoLineaDeBus = db.daoLineaDeBus();
+        BusesDao daoLineaDeBus = db.daoBus();
 
-        for (Buses lineaDeBus : listaLineasDeBus) {
-            daoLineaDeBus.insertarLineasDeBus(lineaDeBus);
-
+        for (Buses bus : listaBuses) {
+            daoLineaDeBus.insertarBus(bus);
         }
-
     }
+
+    public void insertarPostesEnBD(List<Postes> listaPostes) {
+        BaseDeDatos db = Room.databaseBuilder(this,
+                BaseDeDatos.class, BaseDeDatos.NOMBRE).allowMainThreadQueries().build();
+        PostesDao daoPoste = db.daoPoste();
+
+        for (Postes poste : listaPostes) {
+            daoPoste.insertarPoste(poste);
+        }
+    }
+
+//    public void insertarBusPostesEnBD(List<BusPostes> listaBusPostes) {
+//        BaseDeDatos db = Room.databaseBuilder(this,
+//                BaseDeDatos.class, BaseDeDatos.NOMBRE).allowMainThreadQueries().build();
+//        BusPostesDao daoBusPostes = db.daoBusPostes();
+//
+//        for (BusPostes busPoste : listaBusPostes) {
+//            daoBusPostes.insertarBusPostes(busPoste);
+//        }
+//    }
 }
