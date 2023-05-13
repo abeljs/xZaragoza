@@ -7,6 +7,8 @@
     android:layout_marginLeft="5dp"
     android:layout_marginRight="5dp"
     android:clickable="true"
+    app:cardCornerRadius="0dp"
+    android:elevation="0dp"
     >
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -31,7 +33,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/txtNombrePoste"
+            android:id="@+id/txtNombrePosteTarjeta"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="22dp"

@@ -1,10 +1,11 @@
 package abeljs.xzaragoza;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -16,15 +17,11 @@ import androidx.room.Room;
 import java.util.ArrayList;
 import java.util.List;
 
-import abeljs.xzaragoza.apis.BusquedaBusPostesAPI;
-import abeljs.xzaragoza.apis.BusquedaBusPostesCallback;
 import abeljs.xzaragoza.apis.BusquedaBusesAPI;
 import abeljs.xzaragoza.apis.BusquedaBusesCallback;
 import abeljs.xzaragoza.apis.BusquedaPostesAPI;
 import abeljs.xzaragoza.apis.BusquedaPostesCallback;
 import abeljs.xzaragoza.data.BaseDeDatos;
-import abeljs.xzaragoza.data.BusPostes;
-import abeljs.xzaragoza.data.BusPostesDao;
 import abeljs.xzaragoza.data.Buses;
 import abeljs.xzaragoza.data.BusesDao;
 import abeljs.xzaragoza.data.Postes;
@@ -34,15 +31,21 @@ import abeljs.xzaragoza.fragments.FragmentTiemposPoste;
 
 public class MainActivity extends AppCompatActivity {
 
+    Context contexto;
     EditText edtNPoste;
+    TextView txtNombrePoste;
 
     private MainActivityViewModel model;
+    private TextWatcher textChangedListener;
+    public boolean seHaEscrito = true;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        contexto = this;
 
         inicializarVistas();
         inicializarEventos();
@@ -54,13 +57,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void inicializarVistas(){
+    private void inicializarVistas() {
         edtNPoste = findViewById(R.id.edtNumeroPoste);
+        txtNombrePoste = findViewById(R.id.txtNombrePoste);
     }
 
     private void inicializarEventos() {
 
-        edtNPoste.addTextChangedListener(new TextWatcher() {
+        textChangedListener = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -68,19 +72,21 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(edtNPoste.getText().toString().isEmpty()){
+                txtNombrePoste.setText("");
+                if (edtNPoste.getText().toString().isEmpty()) {
                     getSupportFragmentManager()
                             .beginTransaction()
                             .replace(R.id.flContenedorFragments, new FragmentBuses())
                             .commit();
                 } else {
                     String numPoste = String.valueOf(s);
-
-                    FragmentTiemposPoste fragmentParada = FragmentTiemposPoste.newInstance(numPoste);
+                    FragmentTiemposPoste fragmentParada = FragmentTiemposPoste.newInstance(numPoste, seHaEscrito);
+                    seHaEscrito = true;
                     getSupportFragmentManager()
                             .beginTransaction()
                             .replace(R.id.flContenedorFragments, fragmentParada)
                             .commit();
+
                 }
             }
 
@@ -89,7 +95,9 @@ public class MainActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
 
             }
-        });
+        };
+
+        edtNPoste.addTextChangedListener(textChangedListener);
 
         model = new ViewModelProvider(this).get(MainActivityViewModel.class);
 
@@ -185,4 +193,14 @@ public class MainActivity extends AppCompatActivity {
 //            daoBusPostes.insertarBusPostes(busPoste);
 //        }
 //    }
+
+
+    @Override
+    public void onBackPressed() {
+        if (!edtNPoste.getText().toString().equals("")){
+            edtNPoste.setText("");
+        } else {
+            super.onBackPressed();
+        }
+    }
 }

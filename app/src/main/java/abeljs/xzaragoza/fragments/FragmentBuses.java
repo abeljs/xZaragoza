@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -26,6 +27,7 @@ public class FragmentBuses extends Fragment implements LineaSelectedInterface {
 
     private BusesAdapter adaptadorBuses;
 
+    CheckBox chkFavorito;
     RecyclerView rvBuses;
     List<Buses> listaBuses;
 
@@ -38,6 +40,8 @@ public class FragmentBuses extends Fragment implements LineaSelectedInterface {
 
         View vista = inflater.inflate(R.layout.fragment_buses, container, false);
 
+        chkFavorito = getActivity().findViewById(R.id.chkFavorito);
+        chkFavorito.setVisibility(View.INVISIBLE);
         rvBuses = vista.findViewById(R.id.rvBuses);
         rvBuses.setLayoutManager(new LinearLayoutManager(getContext()));
 

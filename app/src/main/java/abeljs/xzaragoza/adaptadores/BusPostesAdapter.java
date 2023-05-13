@@ -17,7 +17,6 @@ import abeljs.xzaragoza.data.BusPostes;
 import abeljs.xzaragoza.data.Postes;
 import abeljs.xzaragoza.data.PostesDao;
 import abeljs.xzaragoza.fragments.BusPostesSelectedInterface;
-import abeljs.xzaragoza.fragments.FragmentTiemposPoste;
 
 
 public class BusPostesAdapter extends RecyclerView.Adapter<BusPostesAdapter.ViewHolder> {
@@ -80,7 +79,7 @@ public class BusPostesAdapter extends RecyclerView.Adapter<BusPostesAdapter.View
         public ViewHolder(View itemView) {
             super(itemView);
             txtNumPoste = itemView.findViewById(R.id.txtNumPoste);
-            txtNombrePoste = itemView.findViewById(R.id.txtNombrePoste);
+            txtNombrePoste = itemView.findViewById(R.id.txtNombrePosteTarjeta);
         }
 
     }

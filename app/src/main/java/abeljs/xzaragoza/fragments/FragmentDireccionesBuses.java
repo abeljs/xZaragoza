@@ -12,10 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import abeljs.xzaragoza.MainActivity;
 import abeljs.xzaragoza.R;
 import abeljs.xzaragoza.adaptadores.BusPostesAdapter;
 import abeljs.xzaragoza.apis.BusquedaBusPostesAPI;
@@ -44,6 +47,7 @@ public class FragmentDireccionesBuses extends Fragment implements BusPostesSelec
     private Button btnDireccion2;
     private List<BusPostes> listaBusPostes = new ArrayList<>();
     private BusPostesAdapter adapatadorBusPostes;
+    private CheckBox chkFavorito;
 
     public FragmentDireccionesBuses() {
     }
@@ -78,8 +82,13 @@ public class FragmentDireccionesBuses extends Fragment implements BusPostesSelec
 
         BusPostesSelectedInterface busPostesSelectedInterface = this;
 
+        chkFavorito = getActivity().findViewById(R.id.chkFavorito);
+
+        chkFavorito.setVisibility(View.INVISIBLE);
         btnDireccion1 = vista.findViewById(R.id.btnDireccion1);
         btnDireccion2 = vista.findViewById(R.id.btnDireccion2);
+//        btnDireccion1.setEnabled(true);
+//        btnDireccion2.setEnabled(false);
 
         btnDireccion1.setText(direccion1);
         btnDireccion2.setText(direccion2);
@@ -99,28 +108,24 @@ public class FragmentDireccionesBuses extends Fragment implements BusPostesSelec
         btnDireccion1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                btnDireccion2.setEnabled(false);
+//                btnDireccion1.setEnabled(true);
                 listaBusPostes = daoBusPostes.getBusPostesPorDestinoBus(direccion1, numBus);
 
                 adapatadorBusPostes = new BusPostesAdapter(getActivity(), busPostesSelectedInterface, listaBusPostes);
                 rvDirecciones.setAdapter(adapatadorBusPostes);
-
-                if (listaBusPostes.size() == 0 || listaBusPostes == null) {
-                    recargaDatos();
-                }
             }
         });
 
         btnDireccion2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                btnDireccion1.setEnabled(false);
+//                btnDireccion2.setEnabled(true);
                 listaBusPostes = daoBusPostes.getBusPostesPorDestinoBus(direccion2, numBus);
 
                 adapatadorBusPostes = new BusPostesAdapter(getActivity(), busPostesSelectedInterface, listaBusPostes);
                 rvDirecciones.setAdapter(adapatadorBusPostes);
-
-                if (listaBusPostes.size() == 0 || listaBusPostes == null) {
-                    recargaDatos();
-                }
             }
         });
 
@@ -165,10 +170,16 @@ public class FragmentDireccionesBuses extends Fragment implements BusPostesSelec
 
     @Override
     public void onBusPostesSelected(BusPostes selectedBusPostes) {
-        FragmentTiemposPoste fragmentParada = FragmentTiemposPoste.newInstance(selectedBusPostes.numPoste);
-        getActivity().getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.flContenedorFragments, fragmentParada)
-                .commit();
+//        FragmentTiemposPoste fragmentParada = FragmentTiemposPoste.newInstance(selectedBusPostes.numPoste);
+//        getActivity().getSupportFragmentManager()
+//                .beginTransaction()
+//                .replace(R.id.flContenedorFragments, fragmentParada)
+//                .addToBackStack(null)
+//                .commit();
+
+        ((MainActivity) getActivity()).seHaEscrito = false;
+
+        EditText editText = getActivity().findViewById(R.id.edtNumeroPoste);
+        editText.setText(selectedBusPostes.numPoste);
     }
 }
