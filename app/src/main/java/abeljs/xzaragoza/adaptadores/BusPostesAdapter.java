@@ -33,7 +33,7 @@ public class BusPostesAdapter extends RecyclerView.Adapter<BusPostesAdapter.View
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View vista = LayoutInflater.from(parent.getContext()).inflate(R.layout.tarjeta_poste,parent,false);
+        View vista = LayoutInflater.from(parent.getContext()).inflate(R.layout.tarjeta_bus_postes,parent,false);
         return new ViewHolder(vista);
     }
 

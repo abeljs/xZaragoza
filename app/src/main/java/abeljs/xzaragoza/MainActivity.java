@@ -4,7 +4,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +30,7 @@ import abeljs.xzaragoza.data.BusesDao;
 import abeljs.xzaragoza.data.Postes;
 import abeljs.xzaragoza.data.PostesDao;
 import abeljs.xzaragoza.fragments.FragmentBuses;
+import abeljs.xzaragoza.fragments.FragmentFavoritos;
 import abeljs.xzaragoza.fragments.FragmentTiemposPoste;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
     Context contexto;
     EditText edtNPoste;
     TextView txtNombrePoste;
+    RadioGroup radioGroup;
+    RadioButton rbBuses;
+    RadioButton rbFavoritos;
 
     private MainActivityViewModel model;
     private TextWatcher textChangedListener;
@@ -58,6 +65,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void inicializarVistas() {
+        radioGroup = findViewById(R.id.rgPestanyas);
+        rbBuses = findViewById(R.id.rbBuses);
+        rbFavoritos = findViewById(R.id.rbFavoritos);
         edtNPoste = findViewById(R.id.edtNumeroPoste);
         txtNombrePoste = findViewById(R.id.txtNombrePoste);
     }
@@ -161,6 +171,25 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
+
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (rbBuses.getId() == checkedId) {
+                    edtNPoste.setText("");
+//                    getSupportFragmentManager()
+//                            .beginTransaction()
+//                            .replace(R.id.flContenedorFragments, new FragmentBuses())
+//                            .commit();
+                } else if (rbFavoritos.getId() == checkedId) {
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.flContenedorFragments, new FragmentFavoritos())
+                            .commit();
+                }
+            }
+        });
+
     }
 
 
@@ -184,15 +213,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-//    public void insertarBusPostesEnBD(List<BusPostes> listaBusPostes) {
-//        BaseDeDatos db = Room.databaseBuilder(this,
-//                BaseDeDatos.class, BaseDeDatos.NOMBRE).allowMainThreadQueries().build();
-//        BusPostesDao daoBusPostes = db.daoBusPostes();
-//
-//        for (BusPostes busPoste : listaBusPostes) {
-//            daoBusPostes.insertarBusPostes(busPoste);
-//        }
-//    }
 
 
     @Override

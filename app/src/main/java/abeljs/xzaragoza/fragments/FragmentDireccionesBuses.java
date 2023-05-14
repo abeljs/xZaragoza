@@ -23,11 +23,9 @@ import abeljs.xzaragoza.R;
 import abeljs.xzaragoza.adaptadores.BusPostesAdapter;
 import abeljs.xzaragoza.apis.BusquedaBusPostesAPI;
 import abeljs.xzaragoza.apis.BusquedaBusPostesCallback;
-import abeljs.xzaragoza.apis.BusquedaTiemposPosteCallback;
 import abeljs.xzaragoza.data.BaseDeDatos;
 import abeljs.xzaragoza.data.BusPostes;
 import abeljs.xzaragoza.data.BusPostesDao;
-import abeljs.xzaragoza.data.TiempoBus;
 
 
 public class FragmentDireccionesBuses extends Fragment implements BusPostesSelectedInterface {
@@ -46,7 +44,7 @@ public class FragmentDireccionesBuses extends Fragment implements BusPostesSelec
     private Button btnDireccion1;
     private Button btnDireccion2;
     private List<BusPostes> listaBusPostes = new ArrayList<>();
-    private BusPostesAdapter adapatadorBusPostes;
+    private BusPostesAdapter adaptadorBusPostes;
     private CheckBox chkFavorito;
 
     public FragmentDireccionesBuses() {
@@ -98,8 +96,8 @@ public class FragmentDireccionesBuses extends Fragment implements BusPostesSelec
 
         listaBusPostes = daoBusPostes.getBusPostesPorDestinoBus(direccion1, numBus);
 
-        adapatadorBusPostes = new BusPostesAdapter(getActivity(), busPostesSelectedInterface, listaBusPostes);
-        rvDirecciones.setAdapter(adapatadorBusPostes);
+        adaptadorBusPostes = new BusPostesAdapter(getActivity(), busPostesSelectedInterface, listaBusPostes);
+        rvDirecciones.setAdapter(adaptadorBusPostes);
 
         if (listaBusPostes.size() == 0 || listaBusPostes == null) {
             recargaDatos();
@@ -112,8 +110,8 @@ public class FragmentDireccionesBuses extends Fragment implements BusPostesSelec
 //                btnDireccion1.setEnabled(true);
                 listaBusPostes = daoBusPostes.getBusPostesPorDestinoBus(direccion1, numBus);
 
-                adapatadorBusPostes = new BusPostesAdapter(getActivity(), busPostesSelectedInterface, listaBusPostes);
-                rvDirecciones.setAdapter(adapatadorBusPostes);
+                adaptadorBusPostes = new BusPostesAdapter(getActivity(), busPostesSelectedInterface, listaBusPostes);
+                rvDirecciones.setAdapter(adaptadorBusPostes);
             }
         });
 
@@ -124,8 +122,8 @@ public class FragmentDireccionesBuses extends Fragment implements BusPostesSelec
 //                btnDireccion2.setEnabled(true);
                 listaBusPostes = daoBusPostes.getBusPostesPorDestinoBus(direccion2, numBus);
 
-                adapatadorBusPostes = new BusPostesAdapter(getActivity(), busPostesSelectedInterface, listaBusPostes);
-                rvDirecciones.setAdapter(adapatadorBusPostes);
+                adaptadorBusPostes = new BusPostesAdapter(getActivity(), busPostesSelectedInterface, listaBusPostes);
+                rvDirecciones.setAdapter(adaptadorBusPostes);
             }
         });
 
@@ -156,7 +154,7 @@ public class FragmentDireccionesBuses extends Fragment implements BusPostesSelec
                 rvDirecciones.post(new Runnable() {
                     @Override
                     public void run() {
-                        adapatadorBusPostes.notifyDataSetChanged();
+                        adaptadorBusPostes.notifyDataSetChanged();
                     }
                 });
             }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="rojo_flojo">#FC8686</color>
-    <color name="rojo_claro">#EE0000</color>
-    <color name="rojo_oscuro">#B30000</color>
+    <color name="rojo_claro">#BF2F2F</color>
+    <color name="rojo_oscuro">#931A1A</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
