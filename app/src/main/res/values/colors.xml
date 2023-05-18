@@ -2,11 +2,14 @@
 <resources>
     <color name="rojo_flojo">#FC8686</color>
     <color name="rojo_claro">#BF2F2F</color>
+    <color name="rojo_claro_claro">#85DF3E3E</color>
     <color name="rojo_oscuro">#931A1A</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="negro">#FF000000</color>
+    <color name="blanco">#FFFFFFFF</color>
+    <color name="blanco_transparente">#CDCDCD</color>
+    <color name="transparente">#00FFFFFF</color>
 
     <!--  COLORES BUSES  -->
     <color name="color_21">#FF2299A7</color>

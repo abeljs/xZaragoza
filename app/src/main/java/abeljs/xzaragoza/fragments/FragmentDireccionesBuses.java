@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,17 +37,20 @@ public class FragmentDireccionesBuses extends Fragment implements BusPostesSelec
     private static final String DIRECCION2 = "direccion2";
 
 
-    private String numBus,direccion1, direccion2;
+    private String numBus, direccion1, direccion2;
 
     private BaseDeDatos db;
     private BusPostesDao daoBusPostes;
 
     private RecyclerView rvDirecciones;
-    private Button btnDireccion1;
-    private Button btnDireccion2;
+
     private List<BusPostes> listaBusPostes = new ArrayList<>();
     private BusPostesAdapter adaptadorBusPostes;
     private CheckBox chkFavorito;
+    private RadioGroup rgPestanyas;
+    private RadioGroup rgDirecciones;
+    private RadioButton rbDireccion1;
+    private RadioButton rbDireccion2;
 
     public FragmentDireccionesBuses() {
     }
@@ -82,14 +87,18 @@ public class FragmentDireccionesBuses extends Fragment implements BusPostesSelec
 
         chkFavorito = getActivity().findViewById(R.id.chkFavorito);
 
-        chkFavorito.setVisibility(View.INVISIBLE);
-        btnDireccion1 = vista.findViewById(R.id.btnDireccion1);
-        btnDireccion2 = vista.findViewById(R.id.btnDireccion2);
-//        btnDireccion1.setEnabled(true);
-//        btnDireccion2.setEnabled(false);
+        chkFavorito.setEnabled(false);
 
-        btnDireccion1.setText(direccion1);
-        btnDireccion2.setText(direccion2);
+
+        rgPestanyas = getActivity().findViewById(R.id.rgPestanyas);
+        rgPestanyas.clearCheck();
+
+        rgDirecciones = vista.findViewById(R.id.rgDirecciones);
+        rbDireccion1 = vista.findViewById(R.id.rbDireccion1);
+        rbDireccion2 = vista.findViewById(R.id.rbDireccion2);
+        rbDireccion1.setChecked(true);
+        rbDireccion1.setText(direccion1);
+        rbDireccion2.setText(direccion2);
 
         rvDirecciones = vista.findViewById(R.id.rvDireccionesBuses);
         rvDirecciones.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -103,31 +112,52 @@ public class FragmentDireccionesBuses extends Fragment implements BusPostesSelec
             recargaDatos();
         }
 
-        btnDireccion1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                btnDireccion2.setEnabled(false);
-//                btnDireccion1.setEnabled(true);
-                listaBusPostes = daoBusPostes.getBusPostesPorDestinoBus(direccion1, numBus);
 
-                adaptadorBusPostes = new BusPostesAdapter(getActivity(), busPostesSelectedInterface, listaBusPostes);
-                rvDirecciones.setAdapter(adaptadorBusPostes);
+        rgDirecciones.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (rbDireccion1.getId() == checkedId) {
+                    if (rbDireccion1.isChecked()) {
+                        listaBusPostes = daoBusPostes.getBusPostesPorDestinoBus(direccion1, numBus);
+                        adaptadorBusPostes = new BusPostesAdapter(getActivity(), busPostesSelectedInterface, listaBusPostes);
+                        rvDirecciones.setAdapter(adaptadorBusPostes);
+                    }
+                } else if (rbDireccion2.getId() == checkedId) {
+                    if (rbDireccion2.isChecked()) {
+                        listaBusPostes = daoBusPostes.getBusPostesPorDestinoBus(direccion2, numBus);
+                        adaptadorBusPostes = new BusPostesAdapter(getActivity(), busPostesSelectedInterface, listaBusPostes);
+                        rvDirecciones.setAdapter(adaptadorBusPostes);
+                    }
+                }
             }
         });
 
-        btnDireccion2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                btnDireccion1.setEnabled(false);
-//                btnDireccion2.setEnabled(true);
-                listaBusPostes = daoBusPostes.getBusPostesPorDestinoBus(direccion2, numBus);
 
-                adaptadorBusPostes = new BusPostesAdapter(getActivity(), busPostesSelectedInterface, listaBusPostes);
-                rvDirecciones.setAdapter(adaptadorBusPostes);
-            }
-        });
+//        btnDireccion1.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+////                btnDireccion2.setEnabled(false);
+////                btnDireccion1.setEnabled(true);
+//                listaBusPostes = daoBusPostes.getBusPostesPorDestinoBus(direccion1, numBus);
+//
+//                adaptadorBusPostes = new BusPostesAdapter(getActivity(), busPostesSelectedInterface, listaBusPostes);
+//                rvDirecciones.setAdapter(adaptadorBusPostes);
+//            }
+//        });
+//
+//        btnDireccion2.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+////                btnDireccion1.setEnabled(false);
+////                btnDireccion2.setEnabled(true);
+//                listaBusPostes = daoBusPostes.getBusPostesPorDestinoBus(direccion2, numBus);
+//
+//                adaptadorBusPostes = new BusPostesAdapter(getActivity(), busPostesSelectedInterface, listaBusPostes);
+//                rvDirecciones.setAdapter(adaptadorBusPostes);
+//            }
+//        });
 
-        return  vista;
+        return vista;
     }
 
 
@@ -146,7 +176,7 @@ public class FragmentDireccionesBuses extends Fragment implements BusPostesSelec
             public void onBusquedaBusPostesComplete(List<BusPostes> result) {
                 listaBusPostes.clear();
 
-                for (int contador = 0 ; contador < result.size() ; contador++){
+                for (int contador = 0; contador < result.size(); contador++) {
                     listaBusPostes.add(result.get(contador));
                     daoBusPostes.insertarBusPostes(result.get(contador));
                 }
@@ -175,9 +205,9 @@ public class FragmentDireccionesBuses extends Fragment implements BusPostesSelec
 //                .addToBackStack(null)
 //                .commit();
 
-        ((MainActivity) getActivity()).seHaEscrito = false;
 
         EditText editText = getActivity().findViewById(R.id.edtNumeroPoste);
         editText.setText(selectedBusPostes.numPoste);
     }
+
 }

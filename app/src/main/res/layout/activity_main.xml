@@ -19,6 +19,32 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+<!--    <com.google.android.material.textfield.TextInputLayout-->
+<!--        android:id="@+id/tilNumeroPoste"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_marginStart="7dp"-->
+<!--        android:layout_marginTop="30dp"-->
+<!--        android:layout_marginEnd="7dp"-->
+<!--        android:layout_marginBottom="7dp"-->
+<!--        app:layout_constraintBottom_toTopOf="@+id/txtNombrePoste"-->
+<!--        app:layout_constraintEnd_toStartOf="@+id/chkFavorito"-->
+<!--        app:layout_constraintStart_toEndOf="@+id/btnProvisionalTiempo"-->
+<!--        app:layout_constraintTop_toTopOf="parent">-->
+
+<!--        <EditText-->
+<!--            android:id="@+id/edtNumeroPoste"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:background="@color/transparente"-->
+<!--            android:focusedByDefault="false"-->
+<!--            android:textAlignment="center"-->
+<!--            android:inputType="number"-->
+<!--            android:maxLength="4"-->
+<!--            android:textSize="32sp" />-->
+
+
+<!--    </com.google.android.material.textfield.TextInputLayout>-->
     <EditText
         android:id="@+id/edtNumeroPoste"
         android:layout_width="0dp"
@@ -30,8 +56,9 @@
         android:ems="10"
         android:focusedByDefault="false"
         android:gravity="bottom|center_horizontal"
-        android:hint="@string/numero_poste_hint"
         android:inputType="number"
+        android:maxLength="4"
+        android:textSize="32sp"
         app:layout_constraintBottom_toTopOf="@+id/txtNombrePoste"
         app:layout_constraintEnd_toStartOf="@+id/chkFavorito"
         app:layout_constraintStart_toEndOf="@+id/btnProvisionalTiempo"
@@ -59,7 +86,9 @@
         android:layout_marginEnd="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rgPestanyas">
+        app:layout_constraintTop_toBottomOf="@+id/rgPestanyas"
+        android:background="@drawable/bg_fragmentcontainer"
+        android:padding="5dp">
 
     </FrameLayout>
 
@@ -71,7 +100,7 @@
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
         android:gravity="center"
-        android:textColor="@color/black"
+        android:textColor="@color/negro"
         app:layout_constraintBottom_toTopOf="@+id/rgPestanyas"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btnProvisionalTiempo" />
@@ -92,8 +121,12 @@
             android:layout_height="wrap_content"
             android:minWidth="120dp"
             android:minHeight="48dp"
+            android:textColor="@color/blanco"
+            android:button="@null"
+            android:textAlignment="center"
             android:text="Buses"
-            android:checked="true"/>
+            android:textSize="16sp"
+            android:background="@drawable/bg_radiobutton" />
 
         <RadioButton
             android:id="@+id/rbFavoritos"
@@ -101,7 +134,12 @@
             android:layout_height="wrap_content"
             android:minWidth="120dp"
             android:minHeight="48dp"
-            android:text="Favoritos" />
+            android:textColor="@color/blanco"
+            android:button="@null"
+            android:textAlignment="center"
+            android:text="Favoritos"
+            android:textSize="16sp"
+            android:background="@drawable/bg_radiobutton"/>
     </RadioGroup>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

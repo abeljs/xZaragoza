@@ -39,9 +39,10 @@ public class FragmentBuses extends Fragment implements LineaSelectedInterface {
                              Bundle savedInstanceState) {
 
         View vista = inflater.inflate(R.layout.fragment_buses, container, false);
+        getActivity().getSupportFragmentManager().popBackStack();
 
         chkFavorito = getActivity().findViewById(R.id.chkFavorito);
-        chkFavorito.setVisibility(View.INVISIBLE);
+        chkFavorito.setEnabled(false);
         rvBuses = vista.findViewById(R.id.rvBuses);
         rvBuses.setLayoutManager(new LinearLayoutManager(getContext()));
 

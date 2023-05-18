@@ -3,7 +3,10 @@ package abeljs.xzaragoza;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextWatcher;
+import android.text.style.RelativeSizeSpan;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -13,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.room.Room;
@@ -27,6 +31,8 @@ import abeljs.xzaragoza.apis.BusquedaPostesCallback;
 import abeljs.xzaragoza.data.BaseDeDatos;
 import abeljs.xzaragoza.data.Buses;
 import abeljs.xzaragoza.data.BusesDao;
+import abeljs.xzaragoza.data.Favoritos;
+import abeljs.xzaragoza.data.FavoritosDao;
 import abeljs.xzaragoza.data.Postes;
 import abeljs.xzaragoza.data.PostesDao;
 import abeljs.xzaragoza.fragments.FragmentBuses;
@@ -44,12 +50,14 @@ public class MainActivity extends AppCompatActivity {
 
     private MainActivityViewModel model;
     private TextWatcher textChangedListener;
-    public boolean seHaEscrito = true;
+    private int ultimoChk = 1; // 1 = Buses, 2 = Favoritos
+    private RadioGroup.OnCheckedChangeListener checkedChangeListenerPestanyas;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         setContentView(R.layout.activity_main);
 
         contexto = this;
@@ -57,11 +65,33 @@ public class MainActivity extends AppCompatActivity {
         inicializarVistas();
         inicializarEventos();
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.flContenedorFragments, new FragmentBuses())
-                .commit();
+        BaseDeDatos db = Room.databaseBuilder(this,
+                BaseDeDatos.class, BaseDeDatos.NOMBRE).allowMainThreadQueries().build();
+        FavoritosDao daoFavoritos = db.daoFavoritos();
 
+        if (daoFavoritos.getFavoritos().size() > 0) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.flContenedorFragments, new FragmentFavoritos())
+                    .commit();
+            ultimoChk = 2;
+            rbFavoritos.setChecked(true);
+        } else {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.flContenedorFragments, new FragmentBuses())
+                    .commit();
+            ultimoChk = 1;
+            rbBuses.setChecked(true);
+            rbFavoritos.setVisibility(View.GONE);
+        }
+        radioGroup.setOnCheckedChangeListener(checkedChangeListenerPestanyas);
+        String hint = getString(R.string.numero_poste_hint);
+        SpannableString spannableString = new SpannableString(hint);
+        spannableString.setSpan(new RelativeSizeSpan(0.6f), 0, hint.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        // Establecer el texto con tamaño relativo como hint
+        edtNPoste.setHint(spannableString);
     }
 
     private void inicializarVistas() {
@@ -84,14 +114,24 @@ public class MainActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 txtNombrePoste.setText("");
                 if (edtNPoste.getText().toString().isEmpty()) {
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.flContenedorFragments, new FragmentBuses())
-                            .commit();
+                    radioGroup.setOnCheckedChangeListener(null);
+                    if (ultimoChk == 1) {
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.flContenedorFragments, new FragmentBuses())
+                                .commit();
+                        rbBuses.setChecked(true);
+                    } else if (ultimoChk == 2) {
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.flContenedorFragments, new FragmentFavoritos())
+                                .commit();
+                        rbFavoritos.setChecked(true);
+                    }
+                    radioGroup.setOnCheckedChangeListener(checkedChangeListenerPestanyas);
                 } else {
                     String numPoste = String.valueOf(s);
-                    FragmentTiemposPoste fragmentParada = FragmentTiemposPoste.newInstance(numPoste, seHaEscrito);
-                    seHaEscrito = true;
+                    FragmentTiemposPoste fragmentParada = FragmentTiemposPoste.newInstance(numPoste);
                     getSupportFragmentManager()
                             .beginTransaction()
                             .replace(R.id.flContenedorFragments, fragmentParada)
@@ -172,23 +212,24 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        checkedChangeListenerPestanyas = new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (rbBuses.getId() == checkedId) {
-                    edtNPoste.setText("");
-//                    getSupportFragmentManager()
-//                            .beginTransaction()
-//                            .replace(R.id.flContenedorFragments, new FragmentBuses())
-//                            .commit();
+                    if (rbBuses.isChecked()) {
+                        getSupportFragmentManager().popBackStack();
+                        ultimoChk = 1;
+                        edtNPoste.setText("");
+                    }
                 } else if (rbFavoritos.getId() == checkedId) {
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.flContenedorFragments, new FragmentFavoritos())
-                            .commit();
+                    if (rbFavoritos.isChecked()) {
+                        getSupportFragmentManager().popBackStack();
+                        ultimoChk = 2;
+                        edtNPoste.setText("");
+                    }
                 }
             }
-        });
+        };
 
     }
 
@@ -221,6 +262,11 @@ public class MainActivity extends AppCompatActivity {
             edtNPoste.setText("");
         } else {
             super.onBackPressed();
+            if(ultimoChk == 1) {
+                rbBuses.setChecked(true);
+            } else if (ultimoChk == 2) {
+                rbFavoritos.setChecked(true);
+            }
         }
     }
 }

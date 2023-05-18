@@ -1,5 +1,7 @@
 package abeljs.xzaragoza.apis;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
@@ -38,6 +40,8 @@ public class BusquedaBusesAPI {
                 } catch (IOException e) {
                     callback.onBusquedaLineasDeBusesError("ERROR al obtener las lineas de buses.");
                 } catch (ParserConfigurationException e) {
+                    callback.onBusquedaLineasDeBusesError("ERROR al obtener las lineas de buses.");
+                } catch (RuntimeException e) {
                     callback.onBusquedaLineasDeBusesError("ERROR al obtener las lineas de buses.");
                 }
             }
@@ -84,7 +88,7 @@ public class BusquedaBusesAPI {
                 urlLineaBus = lineasBusRespuesta.item(i).getTextContent();
                 numLineaBus = urlLineaBus.substring(urlLineaBus.lastIndexOf('/') + 1);
 
-                if (numLineaBus.equals("TUR") || (!numLineaBus.contains("_") && !numLineaBus.contains("R") && !numLineaBus.contains("T") && !numLineaBus.equals("1"))) {
+                if ((!numLineaBus.contains("_") && !numLineaBus.contains("R") && !numLineaBus.contains("T") && !numLineaBus.equals("1"))) {
                     if (numLineaBus.startsWith("N")) {
                         numLineaBusModificado = numLineaBus.substring(0, 1) + "0" + numLineaBus.substring(1);
                         direccion1 = buscarDireccionesSynchronous(numLineaBusModificado);
@@ -123,6 +127,7 @@ public class BusquedaBusesAPI {
     public static String buscarDireccionesSynchronous(String numLinea)
             throws SAXException, IOException, ParserConfigurationException {
 
+        Log.e("prueba hola", numLinea);
         URL url = new URL("https://www.zaragoza.es/sede/servicio/urbanismo-infraestructuras/equipamiento/linea-transporte/" + numLinea + ".xml");
 
         HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();

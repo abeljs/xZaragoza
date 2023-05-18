@@ -42,9 +42,9 @@ public class BusquedaPostesAPI {
                 } catch (ParserConfigurationException e) {
                     callback.onBusquedaPostesError("ERROR al obtener los postes.");
                 }
-//                catch (RuntimeException e) {
-//                    callback.onBusquedaPostesError("ERROR número de poste incorrecto.");
-//                }
+                catch (RuntimeException e) {
+                    callback.onBusquedaPostesError("ERROR al obtener los postes.");
+                }
             }
         });
     }

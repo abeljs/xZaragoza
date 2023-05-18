@@ -39,6 +39,8 @@ public class BusquedaBusPostesAPI {
                     callback.onBusquedaBusPostesError("ERROR al obtener los postes.");
                 } catch (ParserConfigurationException e) {
                     callback.onBusquedaBusPostesError("ERROR al obtener los postes.");
+                } catch (RuntimeException e) {
+                    callback.onBusquedaBusPostesError("ERROR al obtener los postes.");
                 }
             }
         });

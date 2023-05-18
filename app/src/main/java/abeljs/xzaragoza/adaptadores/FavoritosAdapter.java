@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -16,24 +17,26 @@ import abeljs.xzaragoza.fragments.FavoritoSelectedInterface;
 public class FavoritosAdapter extends RecyclerView.Adapter<FavoritosAdapter.ViewHolder> {
 
     private List<Favoritos> listaFavoritos;
-    private FavoritoSelectedInterface favoritoSelected;
+    private final FavoritoSelectedInterface favoritoSelected;
 
-    public FavoritosAdapter(List<Favoritos> listaFavoritos, FavoritoSelectedInterface favoritoSelectedInterface) {
+    public FavoritosAdapter(List<Favoritos> listaFavoritos, FavoritoSelectedInterface favoritoSelected) {
         this.listaFavoritos = listaFavoritos;
-        this.favoritoSelected = favoritoSelectedInterface;
+        this.favoritoSelected = favoritoSelected;
+    }
+
+
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View vista = LayoutInflater.from(parent.getContext()).inflate(R.layout.tarjeta_poste, parent, false);
+        return new ViewHolder(vista);
     }
 
     @Override
-    public FavoritosAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View vista = LayoutInflater.from(parent.getContext()).inflate(R.layout.tarjeta_bus,parent,false);
-        return new FavoritosAdapter.ViewHolder(vista);
-    }
-
-    @Override
-    public void onBindViewHolder(FavoritosAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Favoritos favorito = listaFavoritos.get(position);
 
-        holder.txtNombrePoste.setText(favorito.nombreFavorito);
+        holder.txtNombreFavorito.setText(favorito.nombreFavorito.trim());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,13 +51,12 @@ public class FavoritosAdapter extends RecyclerView.Adapter<FavoritosAdapter.View
         return listaFavoritos.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView txtNombrePoste;
+    public class ViewHolder extends  RecyclerView.ViewHolder {
+        TextView txtNombreFavorito;
 
-        public ViewHolder(View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            txtNombrePoste = itemView.findViewById(R.id.txtNombrePosteFavorito);
+            txtNombreFavorito = itemView.findViewById(R.id.txtNombrePosteFavorito);
         }
-
     }
 }
