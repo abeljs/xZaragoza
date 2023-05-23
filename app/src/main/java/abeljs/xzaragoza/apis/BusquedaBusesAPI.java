@@ -33,8 +33,8 @@ public class BusquedaBusesAPI {
             @Override
             public void run() {
                 try {
-                    List<Buses> listaLineasDeBus = getBusesSynchronous();
-                    callback.onBusquedaLineasDeBusesComplete(listaLineasDeBus);
+                    List<Buses> listaBuses = getBusesSynchronous();
+                    callback.onBusquedaLineasDeBusesComplete(listaBuses);
                 } catch (SAXException e) {
                     callback.onBusquedaLineasDeBusesError("ERROR al obtener las lineas de buses.");
                 } catch (IOException e) {
@@ -50,7 +50,7 @@ public class BusquedaBusesAPI {
 
     public List<Buses> getBusesSynchronous()
             throws SAXException, IOException, ParserConfigurationException {
-        List<Buses> listaLineasBus = new ArrayList<>();
+        List<Buses> listaBuses = new ArrayList<>();
 
         URL url = new URL("https://www.zaragoza.es/sede/servicio/urbanismo-infraestructuras/transporte-urbano/linea-autobus.xml");
 
@@ -81,24 +81,24 @@ public class BusquedaBusesAPI {
             }
 
             Element elementoResultado = (Element) respuesta.item(0);
-            NodeList lineasBusRespuesta = elementoResultado.getElementsByTagName("result").item(0).getChildNodes();
-            String numLineaBus, numLineaBusModificado, urlLineaBus, direccion1, direccion2;
+            NodeList busesRespuesta = elementoResultado.getElementsByTagName("result").item(0).getChildNodes();
+            String numBus, numBusModificado, urlBus, direccion1, direccion2;
 
-            for (int i = 0; i < lineasBusRespuesta.getLength(); i++) {
-                urlLineaBus = lineasBusRespuesta.item(i).getTextContent();
-                numLineaBus = urlLineaBus.substring(urlLineaBus.lastIndexOf('/') + 1);
+            for (int i = 0; i < busesRespuesta.getLength(); i++) {
+                urlBus = busesRespuesta.item(i).getTextContent();
+                numBus = urlBus.substring(urlBus.lastIndexOf('/') + 1);
 
-                if ((!numLineaBus.contains("_") && !numLineaBus.contains("R") && !numLineaBus.contains("T") && !numLineaBus.equals("1"))) {
-                    if (numLineaBus.startsWith("N")) {
-                        numLineaBusModificado = numLineaBus.substring(0, 1) + "0" + numLineaBus.substring(1);
-                        direccion1 = buscarDireccionesSynchronous(numLineaBusModificado);
-                    } else if (numLineaBus.startsWith("CI")) {
-                        direccion1 = buscarDireccionesSynchronous(numLineaBus);
-                    } else if (numLineaBus.equals("C1")) {
-                        numLineaBusModificado = "0" + numLineaBus.substring(0);
-                        direccion1 = buscarDireccionesSynchronous(numLineaBusModificado);
+                if ((!numBus.contains("_") && !numBus.contains("R") && !numBus.contains("T") && !numBus.equals("1"))) {
+                    if (numBus.startsWith("N")) {
+                        numBusModificado = numBus.substring(0, 1) + "0" + numBus.substring(1);
+                        direccion1 = buscarDireccionesSynchronous(numBusModificado);
+                    } else if (numBus.startsWith("CI")) {
+                        direccion1 = buscarDireccionesSynchronous(numBus);
+                    } else if (numBus.equals("C1")) {
+                        numBusModificado = "0" + numBus.substring(0);
+                        direccion1 = buscarDireccionesSynchronous(numBusModificado);
                     } else {
-                        direccion1 = buscarDireccionesSynchronous(numLineaBus);
+                        direccion1 = buscarDireccionesSynchronous(numBus);
                     }
 
                     direccion2 = "";
@@ -115,19 +115,18 @@ public class BusquedaBusesAPI {
                         direccion2 = direccion1 + " -";
                     }
 
-                    Buses lineaBus = new Buses(numLineaBus, direccion1, direccion2);
+                    Buses lineaBus = new Buses(numBus, direccion1, direccion2);
 //                    Log.d("Prueba", numLineaBus);
-                    listaLineasBus.add(lineaBus);
+                    listaBuses.add(lineaBus);
                 }
             }
         }
-        return listaLineasBus;
+        return listaBuses;
     }
 
     public static String buscarDireccionesSynchronous(String numLinea)
             throws SAXException, IOException, ParserConfigurationException {
 
-        Log.e("prueba hola", numLinea);
         URL url = new URL("https://www.zaragoza.es/sede/servicio/urbanismo-infraestructuras/equipamiento/linea-transporte/" + numLinea + ".xml");
 
         HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();

@@ -7,6 +7,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextWatcher;
 import android.text.style.RelativeSizeSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -22,10 +23,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.room.Room;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import abeljs.xzaragoza.apis.BusquedaBusesAPI;
 import abeljs.xzaragoza.apis.BusquedaBusesCallback;
+import abeljs.xzaragoza.apis.BusquedaNoticiasAPI;
+import abeljs.xzaragoza.apis.BusquedaNoticiasCallback;
 import abeljs.xzaragoza.apis.BusquedaPostesAPI;
 import abeljs.xzaragoza.apis.BusquedaPostesCallback;
 import abeljs.xzaragoza.data.BaseDeDatos;
@@ -33,6 +38,8 @@ import abeljs.xzaragoza.data.Buses;
 import abeljs.xzaragoza.data.BusesDao;
 import abeljs.xzaragoza.data.Favoritos;
 import abeljs.xzaragoza.data.FavoritosDao;
+import abeljs.xzaragoza.data.Noticias;
+import abeljs.xzaragoza.data.NoticiasDao;
 import abeljs.xzaragoza.data.Postes;
 import abeljs.xzaragoza.data.PostesDao;
 import abeljs.xzaragoza.fragments.FragmentBuses;
@@ -41,6 +48,7 @@ import abeljs.xzaragoza.fragments.FragmentTiemposPoste;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final int DIAS_CON_NOTICIA = -14;
     Context contexto;
     EditText edtNPoste;
     TextView txtNombrePoste;
@@ -61,6 +69,31 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         contexto = this;
+
+        BusquedaNoticiasAPI noticiasAPI = new BusquedaNoticiasAPI();
+        noticiasAPI.getNoticias(new BusquedaNoticiasCallback() {
+            @Override
+            public void onBusquedaNoticiasComplete(List<Noticias> listaNoticias) {
+                BaseDeDatos db = Room.databaseBuilder(contexto,
+                        BaseDeDatos.class, BaseDeDatos.NOMBRE).allowMainThreadQueries().build();
+                NoticiasDao daoNoticias = db.daoNoticias();
+
+                for (Noticias noticia : listaNoticias) {
+                    daoNoticias.insertarNoticia(noticia);
+                }
+
+                Calendar fechaBorrado = Calendar.getInstance();
+                fechaBorrado.add(Calendar.DATE, DIAS_CON_NOTICIA);
+
+                daoNoticias.limpiarNoticias(fechaBorrado.getTime());
+                //                Log.e("pruebaNoticias", daoNoticias.getNoticia().get(0).fecha.toString());
+            }
+
+            @Override
+            public void onBusquedaNoticiasError(String cadenaError) {
+
+            }
+        });
 
         inicializarVistas();
         inicializarEventos();
@@ -166,29 +199,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onBusquedaLineasDeBusesComplete(List<Buses> listaLineasDeBus) {
                 insertarBusesEnBD(listaLineasDeBus);
-
-//                for (Buses bus : listaLineasDeBus) {
-//                    BusquedaBusPostesAPI apiBusPostes = new BusquedaBusPostesAPI();
-//                    apiBusPostes.getBusPostes(new BusquedaBusPostesCallback() {
-//                        @Override
-//                        public void onBusquedaBusPostesComplete(List<BusPostes> listaBusPostes) {
-//                            if (listaBusPostes != null) {
-//                                if (listaBusPostes.size() > 0) {
-//                                    Log.e("pruebaDef", listaBusPostes.get(0).destino + " "
-//                                            + listaBusPostes.get(0).numBus + " "
-//                                            + listaBusPostes.get(0).numPoste + " "
-//                                            + listaBusPostes.get(0).orden);
-//                                    insertarBusPostesEnBD(listaBusPostes);
-//                                }
-//                            }
-//                        }
-//
-//                        @Override
-//                        public void onBusquedaBusPostesError(String cadenaError) {
-//
-//                        }
-//                    }, bus.numBus);
-//                }
             }
 
             @Override
