@@ -7,7 +7,6 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextWatcher;
 import android.text.style.RelativeSizeSpan;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -15,33 +14,41 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.room.Room;
 
+import com.smarteist.autoimageslider.SliderView;
+
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import abeljs.xzaragoza.adaptadores.SliderNoticiasAdapter;
 import abeljs.xzaragoza.apis.BusquedaBusesAPI;
 import abeljs.xzaragoza.apis.BusquedaBusesCallback;
 import abeljs.xzaragoza.apis.BusquedaNoticiasAPI;
 import abeljs.xzaragoza.apis.BusquedaNoticiasCallback;
 import abeljs.xzaragoza.apis.BusquedaPostesAPI;
 import abeljs.xzaragoza.apis.BusquedaPostesCallback;
+import abeljs.xzaragoza.apis.BusquedaTemperaturaAPI;
+import abeljs.xzaragoza.apis.BusquedaTemperaturaCallback;
 import abeljs.xzaragoza.data.BaseDeDatos;
 import abeljs.xzaragoza.data.Buses;
 import abeljs.xzaragoza.data.BusesDao;
-import abeljs.xzaragoza.data.Favoritos;
 import abeljs.xzaragoza.data.FavoritosDao;
 import abeljs.xzaragoza.data.Noticias;
 import abeljs.xzaragoza.data.NoticiasDao;
 import abeljs.xzaragoza.data.Postes;
 import abeljs.xzaragoza.data.PostesDao;
+import abeljs.xzaragoza.data.Temperatura;
 import abeljs.xzaragoza.fragments.FragmentBuses;
 import abeljs.xzaragoza.fragments.FragmentFavoritos;
 import abeljs.xzaragoza.fragments.FragmentTiemposPoste;
@@ -55,7 +62,16 @@ public class MainActivity extends AppCompatActivity {
     RadioGroup radioGroup;
     RadioButton rbBuses;
     RadioButton rbFavoritos;
+    SliderView sldNoticias;
+    ConstraintLayout clTiempo;
 
+    // Temperatura
+    TextView txtTempActual;
+    TextView txtTempMin;
+    TextView txtTempMax;
+    TextView txtEstadoCielo;
+
+    private SliderNoticiasAdapter sliderNoticiasAdapter;
     private MainActivityViewModel model;
     private TextWatcher textChangedListener;
     private int ultimoChk = 1; // 1 = Buses, 2 = Favoritos
@@ -69,6 +85,45 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         contexto = this;
+
+
+        inicializarVistas();
+        inicializarEventos();
+
+        BusquedaTemperaturaAPI temperaturaAPI = new BusquedaTemperaturaAPI();
+        temperaturaAPI.getTemperatura(new BusquedaTemperaturaCallback() {
+            @Override
+            public void onBusquedaTemperaturaComplete(Temperatura result) {
+                clTiempo.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        txtTempActual.setText(String.valueOf(result.temperaturaActual));
+                        txtTempMin.setText(String.valueOf(result.temperaturaMinima) + "º");
+                        txtTempMax.setText(String.valueOf(result.temperaturaMaxima) + "º");
+                        String estadoTiempoCadena = result.estadoDeCielo;
+
+                        clTiempo.setClipToOutline(true);
+
+                        if (comprobarExpresionRegular(estadoTiempoCadena, "(?i).*torment.*")) {
+                            clTiempo.setBackgroundResource(R.drawable.bg_tormenta);
+                        } else if (comprobarExpresionRegular(estadoTiempoCadena, "(?i).*lluvi.*")) {
+                            clTiempo.setBackgroundResource(R.drawable.bg_lluvia);
+                        } else if (comprobarExpresionRegular(estadoTiempoCadena, "(?i).*nub.*") ||
+                                comprobarExpresionRegular(estadoTiempoCadena, "(?i).*cubierto.*")) {
+                            clTiempo.setBackgroundResource(R.drawable.bg_nublado);
+                        } else if (comprobarExpresionRegular(estadoTiempoCadena, "(?i).*niebl.*")) {
+                            clTiempo.setBackgroundResource(R.drawable.bg_niebla);
+                        }
+                        txtEstadoCielo.setText(estadoTiempoCadena);
+                        clTiempo.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+
+            @Override
+            public void onBusquedaTemperaturaError(String cadenaError) {
+            }
+        });
 
         BusquedaNoticiasAPI noticiasAPI = new BusquedaNoticiasAPI();
         noticiasAPI.getNoticias(new BusquedaNoticiasCallback() {
@@ -86,7 +141,22 @@ public class MainActivity extends AppCompatActivity {
                 fechaBorrado.add(Calendar.DATE, DIAS_CON_NOTICIA);
 
                 daoNoticias.limpiarNoticias(fechaBorrado.getTime());
-                //                Log.e("pruebaNoticias", daoNoticias.getNoticia().get(0).fecha.toString());
+
+                List<Noticias> listaCincoNoticias = daoNoticias.getCincoNoticiasRecientes();
+                for (Noticias noticia : listaCincoNoticias) {
+                    noticia.setFechaVista(Calendar.getInstance().getTime());
+                    daoNoticias.cambiarFechaVista(noticia);
+                }
+                sldNoticias.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        sliderNoticiasAdapter = new SliderNoticiasAdapter(contexto, listaCincoNoticias);
+                        sldNoticias.setSliderAdapter(sliderNoticiasAdapter);
+                        sldNoticias.setAutoCycle(true);
+                        sldNoticias.startAutoCycle();
+
+                    }
+                });
             }
 
             @Override
@@ -95,8 +165,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        inicializarVistas();
-        inicializarEventos();
 
         BaseDeDatos db = Room.databaseBuilder(this,
                 BaseDeDatos.class, BaseDeDatos.NOMBRE).allowMainThreadQueries().build();
@@ -127,12 +195,26 @@ public class MainActivity extends AppCompatActivity {
         edtNPoste.setHint(spannableString);
     }
 
+    private Boolean comprobarExpresionRegular(String cadenaAComparar, String expresionRegular) {
+        Pattern pat = Pattern.compile(expresionRegular);
+        Matcher mat = pat.matcher(cadenaAComparar);
+        return mat.matches();
+    }
+
     private void inicializarVistas() {
         radioGroup = findViewById(R.id.rgPestanyas);
         rbBuses = findViewById(R.id.rbBuses);
         rbFavoritos = findViewById(R.id.rbFavoritos);
         edtNPoste = findViewById(R.id.edtNumeroPoste);
         txtNombrePoste = findViewById(R.id.txtNombrePoste);
+        sldNoticias = findViewById(R.id.sldNoticias);
+
+        // Temperatura
+        clTiempo = findViewById(R.id.clTiempo);
+        txtTempActual = findViewById(R.id.txtTemperaturaActual);
+        txtTempMin = findViewById(R.id.txtTemperaturaMinima);
+        txtTempMax = findViewById(R.id.txtTemperaturaMaxima);
+        txtEstadoCielo = findViewById(R.id.txtEstadoCielo);
     }
 
     private void inicializarEventos() {
@@ -264,15 +346,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        BaseDeDatos db = Room.databaseBuilder(this,
+                BaseDeDatos.class, BaseDeDatos.NOMBRE).allowMainThreadQueries().build();
+        db.close();
+    }
 
     @Override
     public void onBackPressed() {
-        if (!edtNPoste.getText().toString().equals("")){
+        if (!edtNPoste.getText().toString().equals("")) {
             edtNPoste.setText("");
         } else {
             super.onBackPressed();
-            if(ultimoChk == 1) {
+            if (ultimoChk == 1) {
                 rbBuses.setChecked(true);
             } else if (ultimoChk == 2) {
                 rbFavoritos.setChecked(true);

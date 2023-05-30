@@ -40,4 +40,8 @@ public class Noticias {
                 ", fechaVista=" + fechaVista +
                 '}';
     }
+
+    public void setFechaVista(Date fechaVista) {
+        this.fechaVista = fechaVista;
+    }
 }

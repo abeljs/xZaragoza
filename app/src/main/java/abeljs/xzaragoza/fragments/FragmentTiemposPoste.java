@@ -138,6 +138,12 @@ public class FragmentTiemposPoste extends Fragment {
             final EditText input = new EditText(getActivity());
             input.setHint(daoPoste.getPoste(numPoste).get(0).nombrePoste.trim());
             builder.setView(input);
+            builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    chkFavorito.setChecked(false);
+                }
+            });
 
             builder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                 @Override
@@ -159,7 +165,6 @@ public class FragmentTiemposPoste extends Fragment {
             builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    chkFavorito.setChecked(false);
                     dialog.cancel();
                 }
             });

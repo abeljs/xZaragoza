@@ -10,6 +10,7 @@
     <color name="blanco">#FFFFFFFF</color>
     <color name="blanco_transparente">#CDCDCD</color>
     <color name="transparente">#00FFFFFF</color>
+    <color name="cielo">#21A5E3</color>
 
     <!--  COLORES BUSES  -->
     <color name="color_21">#FF2299A7</color>

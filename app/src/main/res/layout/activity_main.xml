@@ -7,50 +7,152 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/btnProvisionalTiempo"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="7dp"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cvRedondeo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toStartOf="@+id/edtNumeroPoste"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="7dp"
+        app:cardCornerRadius="5dp"
+        app:cardElevation="0dp">
 
-<!--    <com.google.android.material.textfield.TextInputLayout-->
-<!--        android:id="@+id/tilNumeroPoste"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="0dp"-->
-<!--        android:layout_marginStart="7dp"-->
-<!--        android:layout_marginTop="30dp"-->
-<!--        android:layout_marginEnd="7dp"-->
-<!--        android:layout_marginBottom="7dp"-->
-<!--        app:layout_constraintBottom_toTopOf="@+id/txtNombrePoste"-->
-<!--        app:layout_constraintEnd_toStartOf="@+id/chkFavorito"-->
-<!--        app:layout_constraintStart_toEndOf="@+id/btnProvisionalTiempo"-->
-<!--        app:layout_constraintTop_toTopOf="parent">-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clTiempo"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:background="@drawable/bg_sol"
+            android:visibility="invisible">
 
-<!--        <EditText-->
-<!--            android:id="@+id/edtNumeroPoste"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:background="@color/transparente"-->
-<!--            android:focusedByDefault="false"-->
-<!--            android:textAlignment="center"-->
-<!--            android:inputType="number"-->
-<!--            android:maxLength="4"-->
-<!--            android:textSize="32sp" />-->
+            <TextView
+                android:id="@+id/txtTemperaturaActual"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:shadowColor="#000000"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="6"
+                android:textColor="@color/blanco"
+                android:textSize="70sp"
+                app:layout_constraintBottom_toTopOf="@+id/lyInfo"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/txtCentigrados"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:shadowColor="#000000"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="6"
+                android:text="º"
+                android:textColor="@color/blanco"
+                android:textSize="24sp"
+                app:layout_constraintStart_toEndOf="@+id/txtTemperaturaActual"
+                app:layout_constraintTop_toTopOf="@+id/txtTemperaturaActual" />
 
 
-<!--    </com.google.android.material.textfield.TextInputLayout>-->
+            <LinearLayout
+                android:id="@+id/lyInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#4D000000"
+                android:orientation="vertical"
+                android:padding="5dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <LinearLayout
+                    android:id="@+id/lyMinMax"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingBottom="2dp"
+                    app:layout_constraintBottom_toTopOf="@+id/txtEstadoCielo"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <TextView
+                        android:id="@+id/txtTemperaturaMinima"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxLines="2"
+                        android:shadowColor="#000000"
+                        android:shadowDx="1"
+                        android:shadowDy="1"
+                        android:shadowRadius="6"
+                        android:textAlignment="center"
+                        android:textColor="@color/blanco"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/txtSeparador"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxLines="2"
+                        android:shadowColor="#000000"
+                        android:shadowDx="1"
+                        android:shadowDy="1"
+                        android:shadowRadius="6"
+                        android:text="/"
+                        android:textAlignment="center"
+                        android:textColor="@color/blanco_transparente"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/txtTemperaturaMaxima"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxLines="2"
+                        android:shadowColor="#000000"
+                        android:shadowDx="1"
+                        android:shadowDy="1"
+                        android:shadowRadius="6"
+                        android:textAlignment="center"
+                        android:textColor="@color/blanco"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/txtEstadoCielo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:maxLines="2"
+                    android:shadowColor="#000000"
+                    android:shadowDx="1"
+                    android:shadowDy="1"
+                    android:shadowRadius="6"
+                    android:text="Prueba cielo"
+                    android:textAlignment="center"
+                    android:textColor="@color/blanco"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
     <EditText
         android:id="@+id/edtNumeroPoste"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="7dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="7dp"
         android:layout_marginBottom="7dp"
         android:ems="10"
@@ -61,7 +163,7 @@
         android:textSize="32sp"
         app:layout_constraintBottom_toTopOf="@+id/txtNombrePoste"
         app:layout_constraintEnd_toStartOf="@+id/chkFavorito"
-        app:layout_constraintStart_toEndOf="@+id/btnProvisionalTiempo"
+        app:layout_constraintStart_toEndOf="@+id/cvRedondeo"
         app:layout_constraintTop_toTopOf="parent" />
 
     <CheckBox
@@ -81,14 +183,16 @@
     <FrameLayout
         android:id="@+id/flContenedorFragments"
         android:layout_width="0dp"
-        android:layout_height="360dp"
+        android:layout_height="0dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/bg_fragmentcontainer"
+        android:padding="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/sldNoticias"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rgPestanyas"
-        android:background="@drawable/bg_fragmentcontainer"
-        android:padding="5dp">
+        app:layout_constraintTop_toBottomOf="@+id/rgPestanyas">
 
     </FrameLayout>
 
@@ -103,7 +207,7 @@
         android:textColor="@color/negro"
         app:layout_constraintBottom_toTopOf="@+id/rgPestanyas"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btnProvisionalTiempo" />
+        app:layout_constraintStart_toEndOf="@+id/cvRedondeo" />
 
     <RadioGroup
         android:id="@+id/rgPestanyas"
@@ -113,7 +217,7 @@
         android:layout_marginTop="20dp"
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnProvisionalTiempo">
+        app:layout_constraintTop_toBottomOf="@+id/cvRedondeo">
 
         <RadioButton
             android:id="@+id/rbBuses"
@@ -141,5 +245,33 @@
             android:textSize="16sp"
             android:background="@drawable/bg_radiobutton"/>
     </RadioGroup>
+
+    <com.smarteist.autoimageslider.SliderView
+        android:id="@+id/sldNoticias"
+        android:layout_width="0dp"
+        android:layout_height="110dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/flContenedorFragments"
+        app:sliderAutoCycleDirection="right"
+        app:sliderAutoCycleEnabled="true"
+        app:sliderAnimationDuration="600"
+        app:sliderIndicatorAnimationDuration="600"
+        app:sliderIndicatorGravity="center_horizontal|bottom"
+        app:sliderIndicatorMargin="8dp"
+        app:sliderIndicatorOrientation="horizontal"
+        app:sliderIndicatorPadding="3dp"
+        app:sliderIndicatorRadius="1.2dp"
+        app:sliderIndicatorSelectedColor="#805A5A5A"
+        app:sliderIndicatorUnselectedColor="#80BAB9B9"
+        app:sliderScrollTimeInSec="10"
+        >
+
+    </com.smarteist.autoimageslider.SliderView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
