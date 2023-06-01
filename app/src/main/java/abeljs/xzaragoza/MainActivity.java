@@ -330,7 +330,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void iniciaCargaPoste(CharSequence numPosteCadena) {
-        if (!numPosteCadena.toString().isEmpty() || numPosteCadena != null) {
+        if (!numPosteCadena.toString().isEmpty() && numPosteCadena != null) {
             int numPosteInt = Integer.parseInt(String.valueOf(numPosteCadena));
             String numPoste = String.valueOf(numPosteInt);
             FragmentTiemposPoste fragmentParada = FragmentTiemposPoste.newInstance(numPoste);
