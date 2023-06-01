@@ -1,6 +1,7 @@
 package abeljs.xzaragoza.fragments;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -113,7 +115,6 @@ public class FragmentTiemposPoste extends Fragment {
         srlRecargar.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                handler.removeCallbacksAndMessages(null);
                 recargaDatos();
             }
         });
@@ -196,13 +197,18 @@ public class FragmentTiemposPoste extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        handler.removeCallbacksAndMessages(null);
         recargaDatos();
     }
 
     private void recargaDatos() {
+        handler.removeCallbacksAndMessages(null);
         BusquedaTiemposPosteAPI api = new BusquedaTiemposPosteAPI();
-        api.getTiemposPoste(new BusquedaTiemposPosteCallback() {
+
+        Context context = getActivity();
+        if (context == null) {
+            return;
+        }
+        api.getTiemposPoste(context, new BusquedaTiemposPosteCallback() {
             @Override
             public void onBusquedaTiemposPosteComplete(ArrayList<TiempoBus> result) {
                 listaTiemposBuses.clear();
@@ -226,9 +232,7 @@ public class FragmentTiemposPoste extends Fragment {
                     }
                 });
 
-
-
-                handler.postDelayed(new Runnable() {
+                rvTiemposPoste.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         recargaDatos();
@@ -240,10 +244,14 @@ public class FragmentTiemposPoste extends Fragment {
 
             @Override
             public void onBusquedaTiemposPosteError(String cadenaError) {
-                Log.e("prueba", "error");
+                rvTiemposPoste.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getContext(), cadenaError, Toast.LENGTH_SHORT).show();
+                        pbCargando.setVisibility(View.GONE);
+                    }
+                });
             }
         }, numPoste);
     }
-
-
 }

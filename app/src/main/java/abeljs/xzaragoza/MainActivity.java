@@ -2,11 +2,13 @@ package abeljs.xzaragoza;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextWatcher;
 import android.text.style.RelativeSizeSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -76,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
     private TextWatcher textChangedListener;
     private int ultimoChk = 1; // 1 = Buses, 2 = Favoritos
     private RadioGroup.OnCheckedChangeListener checkedChangeListenerPestanyas;
+    private Handler handlerCargaPoste = new Handler();
 
 
     @Override
@@ -226,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            public void onTextChanged(CharSequence numPosteCadena, int start, int before, int count) {
                 txtNombrePoste.setText("");
                 if (edtNPoste.getText().toString().isEmpty()) {
                     radioGroup.setOnCheckedChangeListener(null);
@@ -245,13 +248,14 @@ public class MainActivity extends AppCompatActivity {
                     }
                     radioGroup.setOnCheckedChangeListener(checkedChangeListenerPestanyas);
                 } else {
-                    String numPoste = String.valueOf(s);
-                    FragmentTiemposPoste fragmentParada = FragmentTiemposPoste.newInstance(numPoste);
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.flContenedorFragments, fragmentParada)
-                            .commit();
-
+                    handlerCargaPoste.removeCallbacksAndMessages(null);
+                    handlerCargaPoste.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.e("pruebaHand", "PRUEBA Handler");
+                            iniciaCargaPoste(numPosteCadena);
+                        }
+                    }, 800);
                 }
             }
 
@@ -323,6 +327,19 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+    }
+
+    private void iniciaCargaPoste(CharSequence numPosteCadena) {
+        if (!numPosteCadena.toString().isEmpty() || numPosteCadena != null) {
+            int numPosteInt = Integer.parseInt(String.valueOf(numPosteCadena));
+            String numPoste = String.valueOf(numPosteInt);
+            FragmentTiemposPoste fragmentParada = FragmentTiemposPoste.newInstance(numPoste);
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.flContenedorFragments, fragmentParada)
+                    .commit();
+        }
     }
 
 

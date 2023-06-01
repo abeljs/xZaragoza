@@ -1,5 +1,9 @@
 package abeljs.xzaragoza.apis;
 
+import android.content.Context;
+
+import androidx.room.Room;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -20,16 +24,21 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import abeljs.xzaragoza.data.BaseDeDatos;
+import abeljs.xzaragoza.data.PostesDao;
 import abeljs.xzaragoza.data.TiempoBus;
 
 public class BusquedaTiemposPosteAPI {
 
     private final Executor executor = Executors.newSingleThreadExecutor();
 
-    public void getTiemposPoste(BusquedaTiemposPosteCallback callback, String numPoste) {
+    public void getTiemposPoste(Context context, BusquedaTiemposPosteCallback callback, String numPoste) {
         executor.execute(new Runnable() {
             @Override
             public void run() {
+                BaseDeDatos db = Room.databaseBuilder(context,
+                        BaseDeDatos.class, BaseDeDatos.NOMBRE).allowMainThreadQueries().build();
+                PostesDao postesDao = db.daoPoste();
                 try {
                     ArrayList<TiempoBus> listaTiemposPoste = getTiemposPosteSynchronous(numPoste);
                     callback.onBusquedaTiemposPosteComplete(listaTiemposPoste);
@@ -40,7 +49,11 @@ public class BusquedaTiemposPosteAPI {
                 } catch (ParserConfigurationException e) {
                     callback.onBusquedaTiemposPosteError("ERROR al obtener los tiempos de los buses.");
                 } catch (RuntimeException e) {
-                    callback.onBusquedaTiemposPosteError("ERROR número de poste incorrecto.");
+                    if (postesDao.getPoste(numPoste).isEmpty()) {
+                        callback.onBusquedaTiemposPosteError("Número de poste incorrecto.");
+                    } else {
+                        callback.onBusquedaTiemposPosteError("ERROR al obtener los tiempos del poste.");
+                    }
                 }
             }
         });
