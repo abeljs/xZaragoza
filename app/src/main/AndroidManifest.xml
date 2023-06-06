@@ -27,6 +27,14 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
+        <service android:name=".servicios.CargaBusesService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="abeljs.xzaragoza.CARGA_DATOS_BUSES"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

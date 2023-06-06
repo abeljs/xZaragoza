@@ -120,6 +120,7 @@ public class FragmentTiemposPoste extends Fragment {
         });
 
         adaptadorTiemposBuses = new TiemposPosteAdapter(listaTiemposBuses);
+        rvTiemposPoste.setLayoutManager(new LinearLayoutManager(getContext()));
         rvTiemposPoste.setAdapter(adaptadorTiemposBuses);
 
         return vista;

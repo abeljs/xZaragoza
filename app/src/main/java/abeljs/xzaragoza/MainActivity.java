@@ -1,6 +1,9 @@
 package abeljs.xzaragoza;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -16,30 +19,24 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.room.Room;
 
 import com.smarteist.autoimageslider.SliderView;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import abeljs.xzaragoza.adaptadores.SliderNoticiasAdapter;
-import abeljs.xzaragoza.apis.BusquedaBusesAPI;
-import abeljs.xzaragoza.apis.BusquedaBusesCallback;
 import abeljs.xzaragoza.apis.BusquedaNoticiasAPI;
 import abeljs.xzaragoza.apis.BusquedaNoticiasCallback;
-import abeljs.xzaragoza.apis.BusquedaPostesAPI;
-import abeljs.xzaragoza.apis.BusquedaPostesCallback;
 import abeljs.xzaragoza.apis.BusquedaTemperaturaAPI;
 import abeljs.xzaragoza.apis.BusquedaTemperaturaCallback;
 import abeljs.xzaragoza.data.BaseDeDatos;
@@ -54,6 +51,7 @@ import abeljs.xzaragoza.data.Temperatura;
 import abeljs.xzaragoza.fragments.FragmentBuses;
 import abeljs.xzaragoza.fragments.FragmentFavoritos;
 import abeljs.xzaragoza.fragments.FragmentTiemposPoste;
+import abeljs.xzaragoza.servicios.CargaBusesService;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -74,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
     TextView txtEstadoCielo;
 
     private SliderNoticiasAdapter sliderNoticiasAdapter;
-    private MainActivityViewModel model;
     private TextWatcher textChangedListener;
     private int ultimoChk = 1; // 1 = Buses, 2 = Favoritos
     private RadioGroup.OnCheckedChangeListener checkedChangeListenerPestanyas;
@@ -87,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         setContentView(R.layout.activity_main);
 
+        startService(new Intent(this, CargaBusesService.class));
         contexto = this;
 
 
@@ -268,7 +266,6 @@ public class MainActivity extends AppCompatActivity {
 
         edtNPoste.addTextChangedListener(textChangedListener);
 
-        model = new ViewModelProvider(this).get(MainActivityViewModel.class);
 
         final Observer<String> mensajeErrorObserver = new Observer<String>() {
             @Override
@@ -277,36 +274,6 @@ public class MainActivity extends AppCompatActivity {
                 toast.show();
             }
         };
-
-        model.getMensajeError().observe(MainActivity.this, mensajeErrorObserver);
-
-        BusquedaBusesAPI apiBusquedaBuses = new BusquedaBusesAPI();
-        apiBusquedaBuses.getBuses(new BusquedaBusesCallback() {
-            @Override
-            public void onBusquedaLineasDeBusesComplete(List<Buses> listaLineasDeBus) {
-                insertarBusesEnBD(listaLineasDeBus);
-            }
-
-            @Override
-            public void onBusquedaLineasDeBusesError(String cadenaError) {
-                model.getMensajeError().postValue(cadenaError);
-            }
-        });
-
-        BusquedaPostesAPI apiBusquedaPostes = new BusquedaPostesAPI();
-        apiBusquedaPostes.getPostes(new BusquedaPostesCallback() {
-            @Override
-            public void onBusquedaPostesComplete(ArrayList<Postes> result) {
-                insertarPostesEnBD(result);
-            }
-
-            @Override
-            public void onBusquedaPostesError(String cadenaError) {
-                model.getMensajeError().postValue(cadenaError);
-            }
-
-        });
-
 
         checkedChangeListenerPestanyas = new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -384,4 +351,5 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
 }

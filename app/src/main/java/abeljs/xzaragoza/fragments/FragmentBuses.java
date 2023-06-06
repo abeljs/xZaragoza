@@ -1,13 +1,19 @@
 package abeljs.xzaragoza.fragments;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
@@ -15,6 +21,7 @@ import androidx.room.Room;
 import java.util.List;
 
 import abeljs.xzaragoza.R;
+import abeljs.xzaragoza.ZgzBusIntents;
 import abeljs.xzaragoza.adaptadores.BusesAdapter;
 import abeljs.xzaragoza.apis.BusquedaBusesAPI;
 import abeljs.xzaragoza.apis.BusquedaBusesCallback;
@@ -30,6 +37,21 @@ public class FragmentBuses extends Fragment implements LineaSelectedInterface {
     CheckBox chkFavorito;
     RecyclerView rvBuses;
     List<Buses> listaBuses;
+
+    private BroadcastReceiver cargaBusesOkBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e("pruebaServicio", "onReceive");
+            recargarDatos();
+        }
+    };
+
+    private BroadcastReceiver cargaBusesErrorBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Toast.makeText(context, intent.getStringExtra(ZgzBusIntents.MENSAJE_ERROR), Toast.LENGTH_SHORT).show();
+        }
+    };
 
     public FragmentBuses() {
     }
@@ -55,33 +77,23 @@ public class FragmentBuses extends Fragment implements LineaSelectedInterface {
         adaptadorBuses = new BusesAdapter(listaBuses, this);
         rvBuses.setAdapter(adaptadorBuses);
 
-        return  vista;
+        Log.e("pruebaServicio", "onCreateView");
+
+        return vista;
     }
 
 
     private void recargarDatos(){
-        BusquedaBusesAPI api = new BusquedaBusesAPI();
-        api.getBuses(new BusquedaBusesCallback() {
-            @Override
-            public void onBusquedaLineasDeBusesComplete(List<Buses> result) {
-                listaBuses.clear();
-                for (int contador = 0 ; contador < result.size() ; contador++){
-                    listaBuses.add(result.get(contador));
-                }
+        BaseDeDatos db = Room.databaseBuilder(getActivity().getApplicationContext(),
+                BaseDeDatos.class, BaseDeDatos.NOMBRE).allowMainThreadQueries().build();
+        BusesDao daoLineaDeBus = db.daoBus();
 
-                rvBuses.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        adaptadorBuses.notifyDataSetChanged();
-                    }
-                });
-            }
+        listaBuses.clear();
+        listaBuses.addAll(daoLineaDeBus.getAllBuses());
 
-            @Override
-            public void onBusquedaLineasDeBusesError(String cadenaError) {
-                Log.e("prueba", "error");
-            }
-        });
+        Log.e("pruebaServicio", "recargaDatos");
+
+        adaptadorBuses.notifyDataSetChanged();
     }
 
     @Override
@@ -96,4 +108,28 @@ public class FragmentBuses extends Fragment implements LineaSelectedInterface {
                 .addToBackStack(null)
                 .commit();
     }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        Log.e("pruebaServicio", "onResume");
+
+        LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(getContext());
+
+        broadcastManager.registerReceiver(cargaBusesOkBroadcastReceiver, new IntentFilter(ZgzBusIntents.BUSES_CARGADOS_OK));
+        broadcastManager.registerReceiver(cargaBusesErrorBroadcastReceiver, new IntentFilter(ZgzBusIntents.BUSES_CARGADOS_ERROR));
+
+    }
+
+    @Override
+    public void onPause (){
+        super.onPause();
+        Log.e("pruebaServicio", "onPause");
+
+        LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(getContext());
+
+        broadcastManager.registerReceiver(cargaBusesOkBroadcastReceiver, new IntentFilter(ZgzBusIntents.BUSES_CARGADOS_OK));
+        broadcastManager.registerReceiver(cargaBusesErrorBroadcastReceiver, new IntentFilter(ZgzBusIntents.BUSES_CARGADOS_ERROR));
+    }
+
 }
