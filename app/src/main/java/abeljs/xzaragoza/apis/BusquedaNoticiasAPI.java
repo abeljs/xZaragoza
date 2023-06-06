@@ -103,7 +103,6 @@ public class BusquedaNoticiasAPI {
                 fecha = dateFormat.parse(((Element) noticiasRespuesta.item(i)).getElementsByTagName("dateCreated").item(0).getTextContent().trim());
 
                 Noticias noticia = new Noticias(urlNoticia, titulo, fecha);
-                Log.e("pruebaNoticias", noticia.toString());
                 listaNoticias.add(noticia);
             }
         }

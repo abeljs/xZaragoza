@@ -112,8 +112,6 @@ public class FragmentBuses extends Fragment implements LineaSelectedInterface {
     @Override
     public void onResume(){
         super.onResume();
-        Log.e("pruebaServicio", "onResume");
-
         LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(getContext());
 
         broadcastManager.registerReceiver(cargaBusesOkBroadcastReceiver, new IntentFilter(ZgzBusIntents.BUSES_CARGADOS_OK));

@@ -1,6 +1,8 @@
 package abeljs.xzaragoza.data;
 
-public class Temperatura {
+import java.io.Serializable;
+
+public class Temperatura implements Serializable {
 
     public int temperaturaActual;
     public int temperaturaMinima;

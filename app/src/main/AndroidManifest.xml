@@ -35,6 +35,14 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </service>
+
+        <service android:name=".servicios.CargaTiempoService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="abeljs.xzaragoza.CARGA_DATOS_EL_TIEMPO"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/clyMain"
@@ -7,10 +8,10 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cvRedondeo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <abeljs.xzaragoza.ElTiempoView
+        android:id="@+id/tvElTiempo"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         app:layout_constraintEnd_toStartOf="@+id/edtNumeroPoste"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -20,132 +21,7 @@
         app:cardCornerRadius="5dp"
         app:cardElevation="0dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/clTiempo"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:background="@drawable/bg_sol"
-            android:visibility="invisible">
-
-            <TextView
-                android:id="@+id/txtTemperaturaActual"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="5dp"
-                android:shadowColor="#000000"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:shadowRadius="6"
-                android:textColor="@color/blanco"
-                android:textSize="70sp"
-                app:layout_constraintBottom_toTopOf="@+id/lyInfo"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/txtCentigrados"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:shadowColor="#000000"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:shadowRadius="6"
-                android:text="º"
-                android:textColor="@color/blanco"
-                android:textSize="24sp"
-                app:layout_constraintStart_toEndOf="@+id/txtTemperaturaActual"
-                app:layout_constraintTop_toTopOf="@+id/txtTemperaturaActual" />
-
-
-            <LinearLayout
-                android:id="@+id/lyInfo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#4D000000"
-                android:orientation="vertical"
-                android:padding="5dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
-
-                <LinearLayout
-                    android:id="@+id/lyMinMax"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:orientation="horizontal"
-                    android:paddingBottom="2dp"
-                    app:layout_constraintBottom_toTopOf="@+id/txtEstadoCielo"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent">
-
-                    <TextView
-                        android:id="@+id/txtTemperaturaMinima"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:maxLines="2"
-                        android:shadowColor="#000000"
-                        android:shadowDx="1"
-                        android:shadowDy="1"
-                        android:shadowRadius="6"
-                        android:textAlignment="center"
-                        android:textColor="@color/blanco"
-                        android:textSize="12sp" />
-
-                    <TextView
-                        android:id="@+id/txtSeparador"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:maxLines="2"
-                        android:shadowColor="#000000"
-                        android:shadowDx="1"
-                        android:shadowDy="1"
-                        android:shadowRadius="6"
-                        android:text="/"
-                        android:textAlignment="center"
-                        android:textColor="@color/blanco_transparente"
-                        android:textSize="12sp" />
-
-                    <TextView
-                        android:id="@+id/txtTemperaturaMaxima"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:maxLines="2"
-                        android:shadowColor="#000000"
-                        android:shadowDx="1"
-                        android:shadowDy="1"
-                        android:shadowRadius="6"
-                        android:textAlignment="center"
-                        android:textColor="@color/blanco"
-                        android:textSize="12sp" />
-
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/txtEstadoCielo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:maxLines="2"
-                    android:shadowColor="#000000"
-                    android:shadowDx="1"
-                    android:shadowDy="1"
-                    android:shadowRadius="6"
-                    android:text="Prueba cielo"
-                    android:textAlignment="center"
-                    android:textColor="@color/blanco"
-                    android:textSize="12sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
-
-            </LinearLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
+    </abeljs.xzaragoza.ElTiempoView>
 
     <EditText
         android:id="@+id/edtNumeroPoste"
@@ -163,7 +39,7 @@
         android:textSize="32sp"
         app:layout_constraintBottom_toTopOf="@+id/txtNombrePoste"
         app:layout_constraintEnd_toStartOf="@+id/chkFavorito"
-        app:layout_constraintStart_toEndOf="@+id/cvRedondeo"
+        app:layout_constraintStart_toEndOf="@+id/tvElTiempo"
         app:layout_constraintTop_toTopOf="parent" />
 
     <CheckBox
@@ -207,7 +83,7 @@
         android:textColor="@color/negro"
         app:layout_constraintBottom_toTopOf="@+id/rgPestanyas"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/cvRedondeo" />
+        app:layout_constraintStart_toEndOf="@+id/tvElTiempo" />
 
     <RadioGroup
         android:id="@+id/rgPestanyas"
@@ -217,7 +93,7 @@
         android:layout_marginTop="20dp"
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cvRedondeo">
+        app:layout_constraintTop_toBottomOf="@+id/tvElTiempo">
 
         <RadioButton
             android:id="@+id/rbBuses"

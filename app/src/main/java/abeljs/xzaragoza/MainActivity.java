@@ -52,6 +52,7 @@ import abeljs.xzaragoza.fragments.FragmentBuses;
 import abeljs.xzaragoza.fragments.FragmentFavoritos;
 import abeljs.xzaragoza.fragments.FragmentTiemposPoste;
 import abeljs.xzaragoza.servicios.CargaBusesService;
+import abeljs.xzaragoza.servicios.CargaTiempoService;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -64,12 +65,7 @@ public class MainActivity extends AppCompatActivity {
     RadioButton rbFavoritos;
     SliderView sldNoticias;
     ConstraintLayout clTiempo;
-
-    // Temperatura
-    TextView txtTempActual;
-    TextView txtTempMin;
-    TextView txtTempMax;
-    TextView txtEstadoCielo;
+    ElTiempoView tiempoView;
 
     private SliderNoticiasAdapter sliderNoticiasAdapter;
     private TextWatcher textChangedListener;
@@ -85,46 +81,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         startService(new Intent(this, CargaBusesService.class));
-        contexto = this;
 
+        contexto = this;
 
         inicializarVistas();
         inicializarEventos();
 
-        BusquedaTemperaturaAPI temperaturaAPI = new BusquedaTemperaturaAPI();
-        temperaturaAPI.getTemperatura(new BusquedaTemperaturaCallback() {
-            @Override
-            public void onBusquedaTemperaturaComplete(Temperatura result) {
-                clTiempo.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        txtTempActual.setText(String.valueOf(result.temperaturaActual));
-                        txtTempMin.setText(String.valueOf(result.temperaturaMinima) + "º");
-                        txtTempMax.setText(String.valueOf(result.temperaturaMaxima) + "º");
-                        String estadoTiempoCadena = result.estadoDeCielo;
-
-                        clTiempo.setClipToOutline(true);
-
-                        if (comprobarExpresionRegular(estadoTiempoCadena, "(?i).*torment.*")) {
-                            clTiempo.setBackgroundResource(R.drawable.bg_tormenta);
-                        } else if (comprobarExpresionRegular(estadoTiempoCadena, "(?i).*lluvi.*")) {
-                            clTiempo.setBackgroundResource(R.drawable.bg_lluvia);
-                        } else if (comprobarExpresionRegular(estadoTiempoCadena, "(?i).*nub.*") ||
-                                comprobarExpresionRegular(estadoTiempoCadena, "(?i).*cubierto.*")) {
-                            clTiempo.setBackgroundResource(R.drawable.bg_nublado);
-                        } else if (comprobarExpresionRegular(estadoTiempoCadena, "(?i).*niebl.*")) {
-                            clTiempo.setBackgroundResource(R.drawable.bg_niebla);
-                        }
-                        txtEstadoCielo.setText(estadoTiempoCadena);
-                        clTiempo.setVisibility(View.VISIBLE);
-                    }
-                });
-            }
-
-            @Override
-            public void onBusquedaTemperaturaError(String cadenaError) {
-            }
-        });
 
         BusquedaNoticiasAPI noticiasAPI = new BusquedaNoticiasAPI();
         noticiasAPI.getNoticias(new BusquedaNoticiasCallback() {
@@ -196,11 +158,21 @@ public class MainActivity extends AppCompatActivity {
         edtNPoste.setHint(spannableString);
     }
 
-    private Boolean comprobarExpresionRegular(String cadenaAComparar, String expresionRegular) {
-        Pattern pat = Pattern.compile(expresionRegular);
-        Matcher mat = pat.matcher(cadenaAComparar);
-        return mat.matches();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(this);
+
+        broadcastManager.registerReceiver(cargaTiempoOkBroadcastReceiver, new IntentFilter(ZgzBusIntents.EL_TIEMPO_CARGADO_OK));
+        broadcastManager.registerReceiver(cargaTiempoErrorBroadcastReceiver, new IntentFilter(ZgzBusIntents.EL_TIEMPO_CARGADO_ERROR));
+        startService(new Intent(this, CargaTiempoService.class));
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
 
     private void inicializarVistas() {
         radioGroup = findViewById(R.id.rgPestanyas);
@@ -211,11 +183,8 @@ public class MainActivity extends AppCompatActivity {
         sldNoticias = findViewById(R.id.sldNoticias);
 
         // Temperatura
+        tiempoView = findViewById(R.id.tvElTiempo);
         clTiempo = findViewById(R.id.clTiempo);
-        txtTempActual = findViewById(R.id.txtTemperaturaActual);
-        txtTempMin = findViewById(R.id.txtTemperaturaMinima);
-        txtTempMax = findViewById(R.id.txtTemperaturaMaxima);
-        txtEstadoCielo = findViewById(R.id.txtEstadoCielo);
     }
 
     private void inicializarEventos() {
@@ -309,27 +278,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-    public void insertarBusesEnBD(List<Buses> listaBuses) {
-        BaseDeDatos db = Room.databaseBuilder(this,
-                BaseDeDatos.class, BaseDeDatos.NOMBRE).allowMainThreadQueries().build();
-        BusesDao daoLineaDeBus = db.daoBus();
-
-        for (Buses bus : listaBuses) {
-            daoLineaDeBus.insertarBus(bus);
-        }
-    }
-
-    public void insertarPostesEnBD(List<Postes> listaPostes) {
-        BaseDeDatos db = Room.databaseBuilder(this,
-                BaseDeDatos.class, BaseDeDatos.NOMBRE).allowMainThreadQueries().build();
-        PostesDao daoPoste = db.daoPoste();
-
-        for (Postes poste : listaPostes) {
-            daoPoste.insertarPoste(poste);
-        }
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -351,5 +299,21 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+    BroadcastReceiver cargaTiempoOkBroadcastReceiver =  new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e("pruebaTemp", intent.getSerializableExtra(ZgzBusIntents.EL_TIEMPO_RESULTADO).toString());
+            tiempoView.setTemperatura((Temperatura) intent.getSerializableExtra(ZgzBusIntents.EL_TIEMPO_RESULTADO));
+        }
+    };
+
+    BroadcastReceiver cargaTiempoErrorBroadcastReceiver =  new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            tiempoView.setDefault();
+            Toast.makeText(context, intent.getStringExtra(ZgzBusIntents.MENSAJE_ERROR), Toast.LENGTH_SHORT).show();
+        }
+    };
 
 }
