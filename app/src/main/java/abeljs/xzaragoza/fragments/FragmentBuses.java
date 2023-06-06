@@ -28,6 +28,7 @@ import abeljs.xzaragoza.apis.BusquedaBusesCallback;
 import abeljs.xzaragoza.data.BaseDeDatos;
 import abeljs.xzaragoza.data.Buses;
 import abeljs.xzaragoza.data.BusesDao;
+import abeljs.xzaragoza.servicios.CargaBusesService;
 
 
 public class FragmentBuses extends Fragment implements LineaSelectedInterface {
@@ -73,6 +74,9 @@ public class FragmentBuses extends Fragment implements LineaSelectedInterface {
         BusesDao daoLineaDeBus = db.daoBus();
 
         listaBuses = daoLineaDeBus.getAllBuses();
+        if (listaBuses.isEmpty()) {
+            getActivity().startService(new Intent(getContext(), CargaBusesService.class));
+        }
 
         adaptadorBuses = new BusesAdapter(listaBuses, this);
         rvBuses.setAdapter(adaptadorBuses);

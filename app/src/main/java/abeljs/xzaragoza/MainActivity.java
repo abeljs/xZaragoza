@@ -80,8 +80,6 @@ public class MainActivity extends AppCompatActivity {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         setContentView(R.layout.activity_main);
 
-        startService(new Intent(this, CargaBusesService.class));
-
         contexto = this;
 
         inicializarVistas();
