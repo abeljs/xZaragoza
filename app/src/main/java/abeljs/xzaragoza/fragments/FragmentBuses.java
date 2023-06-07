@@ -42,7 +42,6 @@ public class FragmentBuses extends Fragment implements LineaSelectedInterface {
     private BroadcastReceiver cargaBusesOkBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e("pruebaServicio", "onReceive");
             recargarDatos();
         }
     };
@@ -81,8 +80,6 @@ public class FragmentBuses extends Fragment implements LineaSelectedInterface {
         adaptadorBuses = new BusesAdapter(listaBuses, this);
         rvBuses.setAdapter(adaptadorBuses);
 
-        Log.e("pruebaServicio", "onCreateView");
-
         return vista;
     }
 
@@ -95,7 +92,6 @@ public class FragmentBuses extends Fragment implements LineaSelectedInterface {
         listaBuses.clear();
         listaBuses.addAll(daoLineaDeBus.getAllBuses());
 
-        Log.e("pruebaServicio", "recargaDatos");
 
         adaptadorBuses.notifyDataSetChanged();
     }
@@ -126,12 +122,10 @@ public class FragmentBuses extends Fragment implements LineaSelectedInterface {
     @Override
     public void onPause (){
         super.onPause();
-        Log.e("pruebaServicio", "onPause");
-
         LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(getContext());
 
-        broadcastManager.registerReceiver(cargaBusesOkBroadcastReceiver, new IntentFilter(ZgzBusIntents.BUSES_CARGADOS_OK));
-        broadcastManager.registerReceiver(cargaBusesErrorBroadcastReceiver, new IntentFilter(ZgzBusIntents.BUSES_CARGADOS_ERROR));
+        broadcastManager.unregisterReceiver(cargaBusesOkBroadcastReceiver);
+        broadcastManager.unregisterReceiver(cargaBusesErrorBroadcastReceiver);
     }
 
 }

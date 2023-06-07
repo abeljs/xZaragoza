@@ -52,6 +52,7 @@ import abeljs.xzaragoza.fragments.FragmentBuses;
 import abeljs.xzaragoza.fragments.FragmentFavoritos;
 import abeljs.xzaragoza.fragments.FragmentTiemposPoste;
 import abeljs.xzaragoza.servicios.CargaBusesService;
+import abeljs.xzaragoza.servicios.CargaNoticiasService;
 import abeljs.xzaragoza.servicios.CargaTiempoService;
 
 public class MainActivity extends AppCompatActivity {
@@ -73,6 +74,59 @@ public class MainActivity extends AppCompatActivity {
     private RadioGroup.OnCheckedChangeListener checkedChangeListenerPestanyas;
     private Handler handlerCargaPoste = new Handler();
 
+    private BroadcastReceiver cargaTiempoOkBroadcastReceiver =  new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e("pruebaTemp", intent.getSerializableExtra(ZgzBusIntents.EL_TIEMPO_RESULTADO).toString());
+            tiempoView.setTemperatura((Temperatura) intent.getSerializableExtra(ZgzBusIntents.EL_TIEMPO_RESULTADO));
+        }
+    };
+
+    private BroadcastReceiver cargaTiempoErrorBroadcastReceiver =  new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e("pruebaService", "PruebaError");
+            tiempoView.setDefault();
+        }
+    };
+
+    private BroadcastReceiver cargaNoticiasOkBroadcastReceiver =  new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e("pruebaNoticias", "broadcast");
+            Calendar fechaBorrado = Calendar.getInstance();
+            fechaBorrado.add(Calendar.DATE, DIAS_CON_NOTICIA);
+
+            BaseDeDatos db = Room.databaseBuilder(getApplicationContext(),
+                    BaseDeDatos.class, BaseDeDatos.NOMBRE).allowMainThreadQueries().build();
+            NoticiasDao daoNoticias = db.daoNoticias();
+
+            daoNoticias.limpiarNoticias(fechaBorrado.getTime());
+
+            List<Noticias> listaCincoNoticias = daoNoticias.getCincoNoticiasRecientes();
+            for (Noticias noticia : listaCincoNoticias) {
+                noticia.setFechaVista(Calendar.getInstance().getTime());
+                daoNoticias.cambiarFechaVista(noticia);
+            }
+            sldNoticias.post(new Runnable() {
+                @Override
+                public void run() {
+                    sliderNoticiasAdapter = new SliderNoticiasAdapter(contexto, listaCincoNoticias);
+                    sldNoticias.setSliderAdapter(sliderNoticiasAdapter);
+                    sldNoticias.setAutoCycle(true);
+                    sldNoticias.startAutoCycle();
+
+                }
+            });
+        }
+    };
+
+    private BroadcastReceiver cargaNoticiasErrorBroadcastReceiver =  new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,51 +134,16 @@ public class MainActivity extends AppCompatActivity {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         setContentView(R.layout.activity_main);
 
+        startService(new Intent(this, CargaNoticiasService.class));
+
+        Log.e("pruebaService", "onCreate");
+
+
+
         contexto = this;
 
         inicializarVistas();
         inicializarEventos();
-
-
-        BusquedaNoticiasAPI noticiasAPI = new BusquedaNoticiasAPI();
-        noticiasAPI.getNoticias(new BusquedaNoticiasCallback() {
-            @Override
-            public void onBusquedaNoticiasComplete(List<Noticias> listaNoticias) {
-                BaseDeDatos db = Room.databaseBuilder(contexto,
-                        BaseDeDatos.class, BaseDeDatos.NOMBRE).allowMainThreadQueries().build();
-                NoticiasDao daoNoticias = db.daoNoticias();
-
-                for (Noticias noticia : listaNoticias) {
-                    daoNoticias.insertarNoticia(noticia);
-                }
-
-                Calendar fechaBorrado = Calendar.getInstance();
-                fechaBorrado.add(Calendar.DATE, DIAS_CON_NOTICIA);
-
-                daoNoticias.limpiarNoticias(fechaBorrado.getTime());
-
-                List<Noticias> listaCincoNoticias = daoNoticias.getCincoNoticiasRecientes();
-                for (Noticias noticia : listaCincoNoticias) {
-                    noticia.setFechaVista(Calendar.getInstance().getTime());
-                    daoNoticias.cambiarFechaVista(noticia);
-                }
-                sldNoticias.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        sliderNoticiasAdapter = new SliderNoticiasAdapter(contexto, listaCincoNoticias);
-                        sldNoticias.setSliderAdapter(sliderNoticiasAdapter);
-                        sldNoticias.setAutoCycle(true);
-                        sldNoticias.startAutoCycle();
-
-                    }
-                });
-            }
-
-            @Override
-            public void onBusquedaNoticiasError(String cadenaError) {
-
-            }
-        });
 
 
         BaseDeDatos db = Room.databaseBuilder(this,
@@ -158,17 +177,28 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+
         super.onResume();
+        startService(new Intent(this, CargaTiempoService.class));
         LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(this);
 
         broadcastManager.registerReceiver(cargaTiempoOkBroadcastReceiver, new IntentFilter(ZgzBusIntents.EL_TIEMPO_CARGADO_OK));
         broadcastManager.registerReceiver(cargaTiempoErrorBroadcastReceiver, new IntentFilter(ZgzBusIntents.EL_TIEMPO_CARGADO_ERROR));
-        startService(new Intent(this, CargaTiempoService.class));
+
+        broadcastManager.registerReceiver(cargaNoticiasOkBroadcastReceiver, new IntentFilter(ZgzBusIntents.NOTICIAS_CARGADAS_OK));
+        broadcastManager.registerReceiver(cargaNoticiasErrorBroadcastReceiver, new IntentFilter(ZgzBusIntents.NOTICIAS_CARGADAS_ERROR));
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(this);
+
+        broadcastManager.unregisterReceiver(cargaTiempoOkBroadcastReceiver);
+        broadcastManager.unregisterReceiver(cargaTiempoErrorBroadcastReceiver);
+
+        broadcastManager.unregisterReceiver(cargaNoticiasOkBroadcastReceiver);
+        broadcastManager.unregisterReceiver(cargaNoticiasErrorBroadcastReceiver);
     }
 
 
@@ -297,21 +327,5 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-    BroadcastReceiver cargaTiempoOkBroadcastReceiver =  new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.e("pruebaTemp", intent.getSerializableExtra(ZgzBusIntents.EL_TIEMPO_RESULTADO).toString());
-            tiempoView.setTemperatura((Temperatura) intent.getSerializableExtra(ZgzBusIntents.EL_TIEMPO_RESULTADO));
-        }
-    };
-
-    BroadcastReceiver cargaTiempoErrorBroadcastReceiver =  new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            tiempoView.setDefault();
-            Toast.makeText(context, intent.getStringExtra(ZgzBusIntents.MENSAJE_ERROR), Toast.LENGTH_SHORT).show();
-        }
-    };
 
 }

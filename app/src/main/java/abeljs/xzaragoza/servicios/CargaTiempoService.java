@@ -3,6 +3,7 @@ package abeljs.xzaragoza.servicios;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -16,7 +17,6 @@ public class CargaTiempoService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
         BusquedaTemperaturaAPI temperaturaAPI = new BusquedaTemperaturaAPI();
         temperaturaAPI.getTemperatura(new BusquedaTemperaturaCallback() {
 
@@ -29,6 +29,7 @@ public class CargaTiempoService extends Service {
 
             @Override
             public void onBusquedaTemperaturaError(String cadenaError) {
+                Log.e("pruebaService", "onStartCommand");
                 Intent intent = new Intent(ZgzBusIntents.EL_TIEMPO_CARGADO_ERROR);
                 intent.putExtra(ZgzBusIntents.MENSAJE_ERROR, cadenaError);
                 LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);

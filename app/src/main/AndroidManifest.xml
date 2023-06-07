@@ -43,6 +43,14 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </service>
+
+        <service android:name=".servicios.CargaNoticiasService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="abeljs.xzaragoza.CARGA_DATOS_NOTICIAS"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
