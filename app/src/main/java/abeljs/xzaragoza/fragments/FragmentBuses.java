@@ -70,9 +70,9 @@ public class FragmentBuses extends Fragment implements LineaSelectedInterface {
 
         BaseDeDatos db = Room.databaseBuilder(getActivity().getApplicationContext(),
                 BaseDeDatos.class, BaseDeDatos.NOMBRE).allowMainThreadQueries().build();
-        BusesDao daoLineaDeBus = db.daoBus();
+        BusesDao daoBuses = db.daoBus();
 
-        listaBuses = daoLineaDeBus.getAllBuses();
+        listaBuses = daoBuses.getAllBuses();
         if (listaBuses.isEmpty()) {
             getActivity().startService(new Intent(getContext(), CargaBusesService.class));
         }

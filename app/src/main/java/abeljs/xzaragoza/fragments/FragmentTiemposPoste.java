@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -135,7 +134,7 @@ public class FragmentTiemposPoste extends Fragment {
             BaseDeDatos db = Room.databaseBuilder(getActivity(),
                     BaseDeDatos.class, BaseDeDatos.NOMBRE).allowMainThreadQueries().build();
             FavoritosDao daoFavoritos = db.daoFavoritos();
-            PostesDao daoPoste = db.daoPoste();
+            PostesDao daoPoste = db.daoPostes();
 
             final EditText input = new EditText(getActivity());
             input.setHint(daoPoste.getPoste(numPoste).get(0).nombrePoste.trim());
@@ -225,7 +224,7 @@ public class FragmentTiemposPoste extends Fragment {
                         if (!listaTiemposBuses.isEmpty()) {
                             BaseDeDatos db = Room.databaseBuilder(getActivity(),
                                     BaseDeDatos.class, BaseDeDatos.NOMBRE).allowMainThreadQueries().build();
-                            PostesDao daoPoste = db.daoPoste();
+                            PostesDao daoPoste = db.daoPostes();
                             chkFavorito.setEnabled(true);
                             String nombre = daoPoste.getPoste(numPoste).get(0).nombrePoste.trim();
                             txtNombrePoste.setText(nombre);

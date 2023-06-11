@@ -38,7 +38,7 @@ public class BusquedaTiemposPosteAPI {
             public void run() {
                 BaseDeDatos db = Room.databaseBuilder(context,
                         BaseDeDatos.class, BaseDeDatos.NOMBRE).allowMainThreadQueries().build();
-                PostesDao postesDao = db.daoPoste();
+                PostesDao postesDao = db.daoPostes();
                 try {
                     ArrayList<TiempoBus> listaTiemposPoste = getTiemposPosteSynchronous(numPoste);
                     callback.onBusquedaTiemposPosteComplete(listaTiemposPoste);

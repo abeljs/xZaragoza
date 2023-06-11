@@ -68,7 +68,7 @@ public class BusPostesAdapter extends RecyclerView.Adapter<BusPostesAdapter.View
     public List<Postes> buscarNombrePoste(String numPoste) {
         BaseDeDatos db = Room.databaseBuilder(context,
                 BaseDeDatos.class, BaseDeDatos.NOMBRE).allowMainThreadQueries().build();
-        PostesDao daoPoste = db.daoPoste();
+        PostesDao daoPoste = db.daoPostes();
 
         return daoPoste.getPoste(numPoste);
     }

@@ -12,7 +12,7 @@ public abstract class BaseDeDatos extends RoomDatabase {
 
     public abstract BusesDao daoBus();
 
-    public abstract PostesDao daoPoste();
+    public abstract PostesDao daoPostes();
 
     public abstract BusPostesDao daoBusPostes();
 

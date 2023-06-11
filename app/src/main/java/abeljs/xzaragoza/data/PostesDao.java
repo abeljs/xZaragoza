@@ -10,6 +10,9 @@ import java.util.List;
 @Dao
 public interface PostesDao {
 
+    @Query("SELECT * FROM postes")
+    List<Postes> getPostes();
+
     @Query("SELECT * FROM postes " +
             "WHERE num_poste LIKE :num_poste")
     List<Postes> getPoste(String num_poste);

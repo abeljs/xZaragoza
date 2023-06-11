@@ -31,17 +31,9 @@ import com.smarteist.autoimageslider.SliderView;
 
 import java.util.Calendar;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import abeljs.xzaragoza.adaptadores.SliderNoticiasAdapter;
-import abeljs.xzaragoza.apis.BusquedaNoticiasAPI;
-import abeljs.xzaragoza.apis.BusquedaNoticiasCallback;
-import abeljs.xzaragoza.apis.BusquedaTemperaturaAPI;
-import abeljs.xzaragoza.apis.BusquedaTemperaturaCallback;
 import abeljs.xzaragoza.data.BaseDeDatos;
-import abeljs.xzaragoza.data.Buses;
-import abeljs.xzaragoza.data.BusesDao;
 import abeljs.xzaragoza.data.FavoritosDao;
 import abeljs.xzaragoza.data.Noticias;
 import abeljs.xzaragoza.data.NoticiasDao;
@@ -53,6 +45,7 @@ import abeljs.xzaragoza.fragments.FragmentFavoritos;
 import abeljs.xzaragoza.fragments.FragmentTiemposPoste;
 import abeljs.xzaragoza.servicios.CargaBusesService;
 import abeljs.xzaragoza.servicios.CargaNoticiasService;
+import abeljs.xzaragoza.servicios.CargaPostesService;
 import abeljs.xzaragoza.servicios.CargaTiempoService;
 
 public class MainActivity extends AppCompatActivity {
@@ -67,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
     SliderView sldNoticias;
     ConstraintLayout clTiempo;
     ElTiempoView tiempoView;
+    List<Postes> lstPostes;
 
     private SliderNoticiasAdapter sliderNoticiasAdapter;
     private TextWatcher textChangedListener;
@@ -77,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
     private BroadcastReceiver cargaTiempoOkBroadcastReceiver =  new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e("pruebaTemp", intent.getSerializableExtra(ZgzBusIntents.EL_TIEMPO_RESULTADO).toString());
             tiempoView.setTemperatura((Temperatura) intent.getSerializableExtra(ZgzBusIntents.EL_TIEMPO_RESULTADO));
         }
     };
@@ -85,8 +78,21 @@ public class MainActivity extends AppCompatActivity {
     private BroadcastReceiver cargaTiempoErrorBroadcastReceiver =  new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e("pruebaService", "PruebaError");
             tiempoView.setDefault();
+        }
+    };
+
+
+    private BroadcastReceiver cargaPostesOkBroadcastReceiver =  new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+        }
+    };
+
+    private BroadcastReceiver cargaPostesErrorBroadcastReceiver =  new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Toast.makeText(context, intent.getStringExtra(ZgzBusIntents.MENSAJE_ERROR), Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -135,10 +141,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         startService(new Intent(this, CargaNoticiasService.class));
+        BaseDeDatos db = Room.databaseBuilder(getApplicationContext(),
+                BaseDeDatos.class, BaseDeDatos.NOMBRE).allowMainThreadQueries().build();
+        PostesDao daoPostes = db.daoPostes();
 
-        Log.e("pruebaService", "onCreate");
-
-
+        lstPostes = daoPostes.getPostes();
+        if (lstPostes.isEmpty()) {
+            startService(new Intent(getApplicationContext(), CargaPostesService.class));
+        }
 
         contexto = this;
 
@@ -146,8 +156,6 @@ public class MainActivity extends AppCompatActivity {
         inicializarEventos();
 
 
-        BaseDeDatos db = Room.databaseBuilder(this,
-                BaseDeDatos.class, BaseDeDatos.NOMBRE).allowMainThreadQueries().build();
         FavoritosDao daoFavoritos = db.daoFavoritos();
 
         if (daoFavoritos.getFavoritos().size() > 0) {
@@ -185,6 +193,9 @@ public class MainActivity extends AppCompatActivity {
         broadcastManager.registerReceiver(cargaTiempoOkBroadcastReceiver, new IntentFilter(ZgzBusIntents.EL_TIEMPO_CARGADO_OK));
         broadcastManager.registerReceiver(cargaTiempoErrorBroadcastReceiver, new IntentFilter(ZgzBusIntents.EL_TIEMPO_CARGADO_ERROR));
 
+        broadcastManager.registerReceiver(cargaPostesOkBroadcastReceiver, new IntentFilter(ZgzBusIntents.POSTES_CARGADOS_OK));
+        broadcastManager.registerReceiver(cargaPostesErrorBroadcastReceiver, new IntentFilter(ZgzBusIntents.POSTES_CARGADOS_ERROR));
+
         broadcastManager.registerReceiver(cargaNoticiasOkBroadcastReceiver, new IntentFilter(ZgzBusIntents.NOTICIAS_CARGADAS_OK));
         broadcastManager.registerReceiver(cargaNoticiasErrorBroadcastReceiver, new IntentFilter(ZgzBusIntents.NOTICIAS_CARGADAS_ERROR));
     }
@@ -196,6 +207,9 @@ public class MainActivity extends AppCompatActivity {
 
         broadcastManager.unregisterReceiver(cargaTiempoOkBroadcastReceiver);
         broadcastManager.unregisterReceiver(cargaTiempoErrorBroadcastReceiver);
+
+        broadcastManager.unregisterReceiver(cargaPostesOkBroadcastReceiver);
+        broadcastManager.unregisterReceiver(cargaPostesErrorBroadcastReceiver);
 
         broadcastManager.unregisterReceiver(cargaNoticiasOkBroadcastReceiver);
         broadcastManager.unregisterReceiver(cargaNoticiasErrorBroadcastReceiver);
