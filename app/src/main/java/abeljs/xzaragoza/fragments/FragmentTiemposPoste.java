@@ -251,9 +251,13 @@ public class FragmentTiemposPoste extends Fragment {
                 rvTiemposPoste.post(new Runnable() {
                     @Override
                     public void run() {
+                        listaTiemposBuses.clear();
+                        adaptadorTiemposBuses.notifyDataSetChanged();
+
                         Toast.makeText(getContext(), cadenaError, Toast.LENGTH_SHORT).show();
                         pbCargando.setVisibility(View.GONE);
                         imgError.setVisibility(View.VISIBLE);
+                        srlRecargar.setRefreshing(false);
                     }
                 });
             }
