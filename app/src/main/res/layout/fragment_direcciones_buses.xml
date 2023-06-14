@@ -7,6 +7,29 @@
     android:layout_height="match_parent"
     tools:context=".fragments.FragmentDireccionesBuses" >
 
+    <ProgressBar
+        android:id="@+id/pbCargandoDirecciones"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/blanco"
+        app:layout_constraintBottom_toTopOf="@+id/rgDirecciones"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imgErrorDirecciones"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        app:layout_constraintBottom_toTopOf="@+id/rgDirecciones"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/icono_poste_error"
+        android:visibility="gone"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvDireccionesBuses"
         android:layout_width="0dp"
@@ -14,7 +37,8 @@
         app:layout_constraintBottom_toTopOf="@+id/rgDirecciones"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        >
 
     </androidx.recyclerview.widget.RecyclerView>
 

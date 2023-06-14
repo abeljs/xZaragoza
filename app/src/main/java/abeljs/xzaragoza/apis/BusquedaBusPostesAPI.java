@@ -84,6 +84,7 @@ public class BusquedaBusPostesAPI {
             Log.e("prueba API", numBus);
             Element elementoResultado = (Element) respuesta.item(0);
             NodeList busPostesRespuesta = elementoResultado.getElementsByTagName("result").item(0).getChildNodes();
+
             String numPoste, destino, primerDestino = "";
             int contador;
 
@@ -91,6 +92,9 @@ public class BusquedaBusPostesAPI {
             for (int i = 1; i < busPostesRespuesta.getLength(); i++) {
                 contador = i;
                 NodeList numPosteSize = elementoResultado.getElementsByTagName("description");
+                if(numPosteSize.getLength() <= 1) {
+                    throw new RuntimeException();
+                }
                 if (numPosteSize.getLength() > 1 && numPosteSize.item(i) != null) {
 
                     numPoste = numPosteSize.item(i).getTextContent().replace("Poste ", "");

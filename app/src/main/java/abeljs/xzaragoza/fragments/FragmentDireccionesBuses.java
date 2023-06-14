@@ -11,16 +11,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import abeljs.xzaragoza.MainActivity;
 import abeljs.xzaragoza.R;
 import abeljs.xzaragoza.adaptadores.BusPostesAdapter;
 import abeljs.xzaragoza.apis.BusquedaBusPostesAPI;
@@ -51,6 +52,8 @@ public class FragmentDireccionesBuses extends Fragment implements BusPostesSelec
     private RadioGroup rgDirecciones;
     private RadioButton rbDireccion1;
     private RadioButton rbDireccion2;
+    private ProgressBar pbCargando;
+    private ImageView imgError;
 
     public FragmentDireccionesBuses() {
     }
@@ -99,6 +102,8 @@ public class FragmentDireccionesBuses extends Fragment implements BusPostesSelec
         rbDireccion1.setChecked(true);
         rbDireccion1.setText(direccion1);
         rbDireccion2.setText(direccion2);
+        pbCargando = vista.findViewById(R.id.pbCargandoDirecciones);
+        imgError = vista.findViewById(R.id.imgErrorDirecciones);
 
         rvDirecciones = vista.findViewById(R.id.rvDireccionesBuses);
         rvDirecciones.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -110,6 +115,9 @@ public class FragmentDireccionesBuses extends Fragment implements BusPostesSelec
 
         if (listaBusPostes.size() == 0 || listaBusPostes == null) {
             recargaDatos();
+            pbCargando.setVisibility(View.VISIBLE);
+        } else {
+            pbCargando.setVisibility(View.GONE);
         }
 
 
@@ -185,6 +193,8 @@ public class FragmentDireccionesBuses extends Fragment implements BusPostesSelec
                     @Override
                     public void run() {
                         adaptadorBusPostes.notifyDataSetChanged();
+                        pbCargando.setVisibility(View.GONE);
+                        imgError.setVisibility(View.GONE);
                     }
                 });
             }
@@ -192,6 +202,14 @@ public class FragmentDireccionesBuses extends Fragment implements BusPostesSelec
             @Override
             public void onBusquedaBusPostesError(String cadenaError) {
                 Log.e("prueba", "error");
+                rvDirecciones.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getContext(), cadenaError, Toast.LENGTH_SHORT).show();
+                        pbCargando.setVisibility(View.GONE);
+                        imgError.setVisibility(View.VISIBLE);
+                    }
+                });
             }
         }, numBus);
     }

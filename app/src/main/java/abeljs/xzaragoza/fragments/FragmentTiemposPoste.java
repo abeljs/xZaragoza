@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -54,6 +55,7 @@ public class FragmentTiemposPoste extends Fragment {
     RadioGroup rgPestanyas;
     RadioButton rbFavoritos;
     ProgressBar pbCargando;
+    ImageView imgError;
 
     ArrayList<TiempoBus> listaTiemposBuses = new ArrayList<>();
 
@@ -88,6 +90,7 @@ public class FragmentTiemposPoste extends Fragment {
         rvTiemposPoste = vista.findViewById(R.id.rvTiemposPoste);
         rvTiemposPoste.setLayoutManager(new LinearLayoutManager(getContext()));
         srlRecargar = vista.findViewById(R.id.srlRecargarLayout);
+        imgError = vista.findViewById(R.id.imgErrorPostes);
 
         chkFavorito = getActivity().findViewById(R.id.chkFavorito);
         chkFavorito.setEnabled(false);
@@ -228,6 +231,7 @@ public class FragmentTiemposPoste extends Fragment {
                             chkFavorito.setEnabled(true);
                             String nombre = daoPoste.getPoste(numPoste).get(0).nombrePoste.trim();
                             txtNombrePoste.setText(nombre);
+                            imgError.setVisibility(View.GONE);
                         }
                     }
                 });
@@ -249,6 +253,7 @@ public class FragmentTiemposPoste extends Fragment {
                     public void run() {
                         Toast.makeText(getContext(), cadenaError, Toast.LENGTH_SHORT).show();
                         pbCargando.setVisibility(View.GONE);
+                        imgError.setVisibility(View.VISIBLE);
                     }
                 });
             }

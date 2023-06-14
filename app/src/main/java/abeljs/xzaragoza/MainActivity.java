@@ -243,6 +243,7 @@ public class MainActivity extends AppCompatActivity {
                 if (edtNPoste.getText().toString().isEmpty()) {
                     radioGroup.setOnCheckedChangeListener(null);
                     if (ultimoChk == 1) {
+                        getSupportFragmentManager().popBackStack();
                         getSupportFragmentManager()
                                 .beginTransaction()
                                 .replace(R.id.flContenedorFragments, new FragmentBuses())
